@@ -13,6 +13,8 @@ import { RouterView } from 'vue-router'
   --dark-grey: #2c2c2c;
   --trento-blue: #5171ff;
   --dark-trento-blue: #314dc8;
+
+  background-color: #f8f8f8;
 }
 
 * {
