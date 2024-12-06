@@ -4,28 +4,47 @@ import { GoogleMap } from "vue3-google-map"
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 const trentoCoords = { lat: 46.066630516969994, lng: 11.136310379875919 }
+const bounds = {
+  // 46.126986, 11.202991
+  east: 11.202991,
+  north: 46.137986,
+  // 46.014265, 11.049947
+  west: 11.049947,
+  south: 46.014265
+}
 
 // const mapsApiLoader = new Loader({
 //   apiKey: GOOGLE_MAPS_API_KEY,
 //   version: "weekly",
 // })
 
+const mapStyles = [
+  {
+    featureType: "poi",
+    stylers: [
+      {visibility: "off"}
+    ]
+  }
+]
+
 </script>
 
 <template>
   <main class="home-container">
-    <div>
-      <GoogleMap
-       :api-key="GOOGLE_MAPS_API_KEY"
-       class="google-map"
-       :center="trentoCoords"
-       :zoom="15"
-       :street-view-control="false"
-       :map-type-control="false"
-       :fullscreen-control="false"
-       zoom-control-position="INLINE_START_BLOCK_END"
-      ></GoogleMap>
-    </div>
+    <GoogleMap
+      class="google-map"
+      :api-key="GOOGLE_MAPS_API_KEY"
+      :center="trentoCoords"
+      :restriction="{ latLngBounds: bounds, strictBounds: true }"
+      :zoom="14"
+      :street-view-control="false"
+      :map-type-control="false"
+      :fullscreen-control="false"
+      draggable-cursor="default"
+      dragging-cursor="move"
+      zoom-control-position="INLINE_START_BLOCK_END"
+      :styles="mapStyles"
+    ></GoogleMap>
 
     <div class="home-content">
       <div class="back_button">
