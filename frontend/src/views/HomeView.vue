@@ -1,20 +1,29 @@
 <script setup>
-import { GoogleMap } from "vue3-google-map";
+import { GoogleMap } from "vue3-google-map"
+// import { Loader } from "@googlemaps/js-api-loader"
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-const center = { lat: 46.066630516969994, lng: 11.136310379875919 };
-// 46.066630516969994, 11.136310379875919
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+const trentoCoords = { lat: 46.066630516969994, lng: 11.136310379875919 }
+
+// const mapsApiLoader = new Loader({
+//   apiKey: GOOGLE_MAPS_API_KEY,
+//   version: "weekly",
+// })
+
 </script>
 
 <template>
   <main class="home-container">
     <div>
       <GoogleMap
-        :api-key="GOOGLE_MAPS_API_KEY"
-        class="google-map"
-        style=""
-        :center="center"
-        :zoom="14"
+       :api-key="GOOGLE_MAPS_API_KEY"
+       class="google-map"
+       :center="trentoCoords"
+       :zoom="15"
+       :street-view-control="false"
+       :map-type-control="false"
+       :fullscreen-control="false"
+       zoom-control-position="INLINE_START_BLOCK_END"
       ></GoogleMap>
     </div>
 
