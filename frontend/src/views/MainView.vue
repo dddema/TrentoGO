@@ -1,4 +1,7 @@
 <script setup>
+import { computed } from "vue";
+import { RouterLink } from "vue-router";
+import { useRoute } from "vue-router";
 import { GoogleMap } from "vue3-google-map"
 // import { Loader } from "@googlemaps/js-api-loader"
 
@@ -27,6 +30,9 @@ const mapStyles = [
   }
 ]
 
+const route = useRoute()
+const isHome = computed(() => route.path == '/')
+
 </script>
 
 <template>
@@ -46,7 +52,9 @@ const mapStyles = [
       :styles="mapStyles"
     ></GoogleMap>
 
-    <div class="home-content">
+    <RouterView />
+
+    <!-- <div class="home-content">
       <div class="back_button">
         <img src="../assets/icons/arrow_back.svg" alt="Torna Indietro" />
         <p>Informazioni Viaggio</p>
@@ -67,7 +75,7 @@ const mapStyles = [
         <p class="ticket-name">Biglietto Ordinario Zona 2</p>
         <p class="ticket-price">1.00€</p>
         <div class="buy-ticket-button">
-          <img src="../assets/icons/cart.svg" />
+          <img src="../assets/icons/cart.svg"/>
           <p>Compra il biglietto</p>
         </div>
       </div>
@@ -76,7 +84,7 @@ const mapStyles = [
         <img src="../assets/icons/directions.svg" />
         <p>Indicazioni</p>
       </div>
-    </div>
+    </div> -->
   </main>
 </template>
 
