@@ -6,15 +6,7 @@ import { RouterView } from 'vue-router'
   <RouterView class="font-roboto" />
 </template>
 
-<style scoped>
+<style>
 @import "tailwindcss";
-/* @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap'); */
-
-/* :root {
-  --dark-grey: #2c2c2c;
-  --trento-blue: #5171ff;
-  --dark-trento-blue: #314dc8;
-
-  background-color: #f8f8f8;
-} */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 </style>

@@ -55,9 +55,7 @@ const isHome = computed(() => route.path == '/')
           :styles="mapStyles"
         ></GoogleMap>
       </div>
-      <div v-if="!isHome" class="w-110 h-full bg-neutral-50 ">
-        <RouterView />
-      </div>
+      <RouterView class="w-110 h-full" />
     </div>
 
     <SearchBar v-if="isHome" />
@@ -97,5 +95,4 @@ const isHome = computed(() => route.path == '/')
 </template>
 
 <style scoped>
-@import "tailwindcss";
 </style>
