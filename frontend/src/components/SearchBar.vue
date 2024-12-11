@@ -70,7 +70,9 @@ watch(query, async (newQuery, oldQuery) => {
     <div class="w-md mx-auto -mb-2 rounded-md pt-3 pb-5 border-1 border-gray-300 bg-neutral-50" :class="{ hidden: !focused }">
       <ul>
         <li v-for="result in autocompleteResults">
-          <span class="font-normal">{{ result.description }}</span>
+          <RouterLink :to="{ name: 'routes', params: { start:  } }">
+            <span class="font-normal">{{ result.description }}</span>
+          </RouterLink>
         </li>
       </ul>
     </div>
@@ -86,9 +88,7 @@ watch(query, async (newQuery, oldQuery) => {
   </div>
 </template>
 
-<style>
-@import "tailwindcss";
-
+<style scoped>
 .hidden {
   display: none;
 }
