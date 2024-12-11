@@ -37,24 +37,30 @@ const isHome = computed(() => route.path == '/')
 </script>
 
 <template>
-  <main class="w-screen h-screen">
-    <GoogleMap
-      class="absolute t-0 l-0 w-full h-full"
-      :api-key="GOOGLE_MAPS_API_KEY"
-      :center="trentoCoords"
-      :restriction="{ latLngBounds: bounds, strictBounds: true }"
-      :zoom="14"
-      :street-view-control="false"
-      :map-type-control="false"
-      :fullscreen-control="false"
-      draggable-cursor="default"
-      dragging-cursor="move"
-      zoom-control-position="INLINE_START_BLOCK_END"
-      :styles="mapStyles"
-    ></GoogleMap>
+  <main>
+    <div class="w-screen h-screen flex flex-row">
+      <div class="grow h-full">
+        <GoogleMap
+          class="w-full h-full"
+          :api-key="GOOGLE_MAPS_API_KEY"
+          :center="trentoCoords"
+          :restriction="{ latLngBounds: bounds, strictBounds: true }"
+          :zoom="14"
+          :street-view-control="false"
+          :map-type-control="false"
+          :fullscreen-control="false"
+          draggable-cursor="default"
+          dragging-cursor="move"
+          zoom-control-position="INLINE_START_BLOCK_END"
+          :styles="mapStyles"
+        ></GoogleMap>
+      </div>
+      <div v-if="!isHome" class="w-110 h-full bg-neutral-50 ">
+        <RouterView />
+      </div>
+    </div>
 
     <SearchBar v-if="isHome" />
-    <RouterView />
 
     <!-- <div class="home-content">
       <div class="back_button">
