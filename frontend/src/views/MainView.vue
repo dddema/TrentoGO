@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { RouterLink, useRoute } from "vue-router";
 import { GoogleMap } from "vue3-google-map"
 // import { Loader } from "@googlemaps/js-api-loader"
 
@@ -55,10 +55,10 @@ const isHome = computed(() => route.path == '/')
           :styles="mapStyles"
         ></GoogleMap>
       </div>
-      <RouterView class="w-110 h-full" />
+      <RouterView class="w-110 h-full p-5" />
     </div>
 
-    <SearchBar v-if="isHome" />
+    <SearchBar v-if="isHome" :user-position="trentoCoords" />
 
     <!-- <div class="home-content">
       <div class="back_button">

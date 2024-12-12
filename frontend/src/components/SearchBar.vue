@@ -1,6 +1,11 @@
 <script setup>
 import axios from 'axios'
 import { ref, watch } from 'vue'
+import { RouterLink } from 'vue-router'
+
+const props = defineProps({
+  userPosition: Object
+})
 
 const query = ref('')
 const autocompleteResults = ref([])
@@ -15,7 +20,7 @@ const fetchData = async (newQuery) => {
           input: newQuery,
           components: 'country:it',
           language: 'it',
-          location:'46.066630516969994,11.136310379875919',
+          location: '46.066630516969994,11.136310379875919',
           // origin: ,
           radius: 6000,
           key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
@@ -66,11 +71,19 @@ watch(query, async (newQuery, oldQuery) => {
 </script>
 
 <template>
-  <div class="left-1/5 right-1/5 text-center fixed bottom-8 transition-bottom duration-300 has-focus:bottom-1/4">
-    <div class="w-md mx-auto -mb-2 rounded-md pt-3 pb-5 border-1 border-gray-300 bg-neutral-50" :class="{ hidden: !focused }">
+  <div class="left-1/5 right-1/5 text-center fixed bottom-8 transition-bottom delay-100 duration-300 has-focus:bottom-1/4">
+    <div class="w-md mx-auto -mb-2 rounded-md pt-3 pb-5 border-1 border-gray-300 bg-neutral-50">
       <ul>
         <li v-for="result in autocompleteResults">
-          <RouterLink :to="{ name: 'routes', params: { start:  } }">
+          <RouterLink :to="
+            {
+              name: 'routes',
+              params: {
+                start: `${userPosition.lat},${userPosition.lng}`,
+                arrival: result.description
+              }
+            }
+          ">
             <span class="font-normal">{{ result.description }}</span>
           </RouterLink>
         </li>

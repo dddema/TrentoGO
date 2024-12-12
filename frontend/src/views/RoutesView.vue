@@ -6,8 +6,7 @@ const route = useRoute();
 
 <template>
 <div class="bg-neutral-50">
-    <p>{{ route.params.start }}</p>
-    <p>{{ route.params.arrival }}</p>
+    
 </div>
 </template>
 
