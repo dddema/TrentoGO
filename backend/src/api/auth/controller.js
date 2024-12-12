@@ -47,7 +47,7 @@ export const signup = async (req, res) => {
 export const googleAuth = async (req, res) => {
   const client = new OAuth2Client()
   const ticket = await client.verifyIdToken({
-    idToken: req.params.idToken,
+    idToken: req.body.idToken,
     audience: process.env.GOOGLE_CLIENT_ID
   })
   const payload = ticket.getPayload()
