@@ -18,17 +18,17 @@ const callback = async (response) => {
   // decodeCredential will retrive the JWT payload from the credential
   // const userData = decodeCredential(response.credential)
   // if (userData!=undefined) {
-    try {
-      const url = 'https://trentogo.onrender.com/auth/google'
-      const res = await axios.get(url, {
-        params: {
-          idToken: response.credentials
-        }
-      })
-      console.log(res)
-    } catch (error) {
-      console.error(error)
-    }
+  try {
+    const url = 'https://trentogo.onrender.com/auth/google'
+    const res = await axios.get(url, {
+      params: {
+        idToken: response.credential
+      }
+    })
+    console.log(res)
+  } catch (error) {
+    console.error(error)
+  }
     
   //   console.log("Handle the userData, FOLLOWING:", userData)
   // } 
