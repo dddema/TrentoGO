@@ -2,9 +2,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
-import jwt from 'jsonwebtoken'
-import md5 from 'md5'
-import rateLimit from 'express-rate-limit'
+import cors from 'cors'
 import api from './api/index.js'
 
 const app = express()
@@ -14,6 +12,7 @@ dotenv.config()
 // connect to mongodb server
 mongoose.connect(process.env.MONGODB_CONN_STRING).catch(err => console.error(err))
 
+app.use(cors())
 app.use(bodyParser.json())
 app.use(api)
 
