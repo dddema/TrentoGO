@@ -8,7 +8,7 @@ const authenticateToken = async (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
     if (err || await BlacklistedToken.exists({ token })) {
-      res.status(403).json({ message: "Non hai fatto l'accesso." })
+      res.status(401).json({ message: "Non hai fatto l'accesso." })
     } else {
       user.token = token
       req.user = user

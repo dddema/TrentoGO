@@ -7,7 +7,8 @@ export const userInfo = async (req, res) => {
 
 export const updatePreferences = async (req, res) => {
   const user = await User.findById(req.user.id)
-  user.preferences = req.body
+  user.preferences.theme = req.body.theme
+  user.preferences.ratingWarning = req.body.ratingWarning
 
   await user.save()
 
@@ -37,7 +38,7 @@ export const addFavouritePlace = async (req, res) => {
   res.status(200).json(user.preferences.favourites)
 }
 
-export const removeFavouritePlace = async (req, res) => {
+export const deleteFavouritePlace = async (req, res) => {
   const user = await User.findById(req.user.id)
   user.preferences.favourites.pull(req.params.id)
 
