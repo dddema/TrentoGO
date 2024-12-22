@@ -3,7 +3,7 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <RouterView class="font-roboto" />
+  <RouterView class="font-[roboto]"/>
 </template>
 
 <style>

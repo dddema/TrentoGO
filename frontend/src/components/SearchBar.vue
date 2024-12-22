@@ -2,6 +2,13 @@
 import axios from 'axios'
 import { ref, watch } from 'vue'
 
+const props = defineProps({
+  position: {
+    type: Object,
+    required: true,
+  }
+})
+
 const query = ref('')
 const autocompleteResults = ref([
     {
@@ -229,92 +236,120 @@ const autocompleteResults = ref([
 
 const focused = ref(false)
 
-// const fetchData = async (newQuery) => {
-//   if (newQuery != '') {
-//     try {
-//       const url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
-//       const response = await axios.get(url, {
-//         params: {
-//           input: newQuery,
-//           components: 'country:it',
-//           language: 'it',
-//           location:'46.066630516969994,11.136310379875919',
-//           // origin: ,
-//           radius: 6000,
-//           key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-//         }
-//       })
+const fetchData = async (newQuery) => {
+  if (newQuery != '') {
+    try {
+      const url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
+      const response = await axios.get(url, {
+        params: {
+          input: newQuery,
+          components: 'country:it',
+          language: 'it',
+          location:'46.066630516969994,11.136310379875919',
+          origin: `${props.position.latitude}, ${props.position.longitude}`,
+          radius: 10000,
+          strictbounds: true,
+          key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+        }
+      })
 
-//       if (response.data.status == 'OK')
-//         autocompleteResults.value = response.data.predictions
-//       else
-//         console.error("Google maps API Error: " + response.data.error_message)
-//     } catch (error) {
-//       console.error(error)
-//     }
-//   }
-// }
+      if (response.data.status == 'OK')
+        autocompleteResults.value = response.data.predictions
+      else
+        console.error("Google maps API Error: " + response.data.error_message)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+}
 
-// let autocompleteBlocked = false
-// let unansweredQuery = false
+let autocompleteBlocked = false
+let unansweredQuery = false
 
-// watch(query, async (newQuery, oldQuery) => {
-//   // watch for query changes -> triggers fetchData and blocks other requests for 500ms
-//   // keeps track of blocked queries and calls fetchData as soon as it unblocks them
+watch(query, async (newQuery, oldQuery) => {
+  // watch for query changes -> triggers fetchData and blocks other requests for 500ms
+  // keeps track of blocked queries and calls fetchData as soon as it unblocks them
 
-//   if (newQuery == '') {
-//     autocompleteResults.value = []
-//     unansweredQuery = false
-//   }
+  if (newQuery == '') {
+    autocompleteResults.value = []
+    unansweredQuery = false
+  }
 
-//   if (!autocompleteBlocked) {
-//     unansweredQuery = false
-//     autocompleteBlocked = true
-//     await fetchData(newQuery)
+  if (!autocompleteBlocked) {
+    unansweredQuery = false
+    autocompleteBlocked = true
+    await fetchData(newQuery)
 
-//     setTimeout(async () => {
-//       if (unansweredQuery) {
-//         unansweredQuery = false
-//         await fetchData(query.value)
-//       }
+    setTimeout(async () => {
+      if (unansweredQuery) {
+        unansweredQuery = false
+        await fetchData(query.value)
+      }
 
-//       autocompleteBlocked = false
-//     }, 500)
-//   } else {
-//     unansweredQuery = true
-//   }
-// })
+      autocompleteBlocked = false
+    }, 500)
+  } else {
+    unansweredQuery = true
+  }
+})
 
 </script>
 
 <template>
-  <div class="left-1/5 right-1/5 text-center fixed bottom-8 transition-bottom duration-300 has-focus:bottom-1/4">
-    <div class="w-md mx-auto -mb-2 rounded-[1rem] pt-3 pb-5 px-3 border-1 border-gray-300 bg-neutral-50 px-10" :class="{ hidden: !focused }">
+  <div class="flex flex-col items-center  left-1/6 right-1/6 text-center fixed bottom-12 transition-bottom duration-300 has-focus:bottom-1/4">
+    <div class="sm:w-xl lg:w-xl mx-auto -mb-2 rounded-[1rem] pt-3 pb-5 px-3 border-1 border-gray-300 bg-neutral-50 px-10 bg-white/30 backdrop-blur-md z-1" :class="{ hidden: !focused }">
       <ul>
-        <li v-for="result in autocompleteResults" class="flex my-1 text-left border-b-1 last:border-b-0 border-gray-300 py-2">
-          <div class="text-center flex flex-col items-center"> 
-            <img class="w-4" src="../assets/icons/location.svg"/>
-            <span class="text-xs">2000000.3 km</span>
+        <li v-for="result in autocompleteResults" class="flex items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 py-2">
+          <div class="text-center flex flex-col items-center justify-center w-4 ml-5">
+            <img v-if="!result.types.includes('route')" src="../assets/icons/location.svg"/>
+            <img v-else src="../assets/icons/road.svg"/>
+
+            <span v-if="result.distance_meters" class="text-xs">{{ (result.distance_meters/1000).toFixed(1) }}&nbsp;km</span>
           </div>
           <span class="font-normal pl-8">{{ `${result.terms[0].value}, `}}</span><span class="pl-1 text-gray-400" >{{ `${result.terms[1].value}` }}</span>
         </li>
       </ul>
+      <div class="flex flex-row text-xs">
+        <span class="bg-blue-500 shadow-md shadow-blue-500/50 mx-1 px-2 py-1 rounded-full text-white flex flex-row align-center">
+          <img src="../assets/icons/home.svg"/>
+          <span class="ml-1">Casa</span>
+        </span>
+        <span class="bg-yellow-400 shadow-md shadow-amber-400/50 mx-1 px-2 py-1 rounded-full text-white  flex flex-row">
+          <img src="../assets/icons/book.svg"/>
+          <span class="ml-1">Uni</span>
+        </span>
+        <span class="bg-red-400 shadow-md shadow-red-400/50 mx-1 px-2 py-1 rounded-full text-white  flex flex-row">
+          <img src="../assets/icons/dumbell.svg"/>
+          <span class="ml-1">Palestra</span>
+        </span>
+      </div>
     </div>
 
-    <input
-      class="w-64 py-2 px-4 z-10 rounded-xl shadow-md border-1 border-gray-200 bg-radial from-violet-200 to-slate-50 to-90% outline-0"
-      type="text"
-      placeholder="🔍Dove vuoi andare?"
-      v-model="query"
-      @focusin="focused = true"
-      @focusout="focused = false"
-    >
+    <div class="relative flex flex-row items-center w-64 py-2 px-3 z-10 rounded-xl shadow-md border-1 border-gray-200 bg-radial from-violet-200 to-slate-50 to-90%">
+      <img class="w-5 inline z-11 " src="../assets/icons/search.svg"/>
+      <input
+        class="text-slate-950 pl-2 outline-0 "
+        type="text"
+        placeholder="Dove vuoi andare?"
+        v-model="query"
+        @focusin="focused = true"
+        @focusout="focused = false"
+      >
+    </div>
+    
     
   </div>
 </template>
 
 <style>
 @import "tailwindcss";
+
+@layer base {
+  input::placeholder,
+  textarea::placeholder {
+    color: #2c2c2c;
+  }
+}
 
 .hidden {
   display: none;
