@@ -1,0 +1,109 @@
+openapi: 3.0.0
+info:
+  title: "trentogo"
+  description: >
+    "webapp to be able to see all of the means of transportation
+    in a single application, without having to switch between all different apps."
+  version: 0.1.1
+
+#servers:
+#  - url: http://api.example.com/v1
+#  description: Optional server description, e.g. Main (production) server
+
+paths:
+  /auth:
+    post:
+      summary: "Authentication of a user through credentials."
+      description: > 
+        "Enables users to authenticate themselves to the web service,
+        using email and password."
+      requestBody:
+        description: "Credentials as email and password."
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: "Authentication succesfull. Returns auth token (JWT)."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        "403":
+          description: "Authentication failed, because of wrong/invalid credentials."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Email o password non corretta/e."
+  
+  /signup:
+    post:
+      summary: "Creation of a new user account."
+      description: >
+        "Registers a new user in the database
+        with the info provided in the request."
+      requestBody:
+        description: >
+          "Credentials as email and password and
+          personal user's info."
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+                - surname
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+                surname:
+                  type: string
+      responses:
+        "200":
+          description: >
+            "Account created succesfully,
+            should redirect to login page."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+        "409":
+          description: "Email already registered in the app."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Email già utilizzata."
+
+  /
