@@ -51,6 +51,24 @@ paths:
                   message:
                     type: string
                     example: "Email o password non corretta/e."
+
+  /logout:
+    get:
+      summary: "Logs out the user."
+      description: "Logs out the user, expiring the auth token."
+      responses:
+        "200":
+          description: "Logged out succesfully."
+        "400":
+          description: "User is not logged in."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Non hai fatto l'accesso."
   
   /signup:
     post:
@@ -83,8 +101,8 @@ paths:
       responses:
         "200":
           description: >
-            "Account created succesfully,
-            should redirect to login page."
+            "Account created successfully.
+            Returns the id."
           content:
             application/json:
               schema:
@@ -106,4 +124,65 @@ paths:
                     type: string
                     example: "Email già utilizzata."
 
-  /
+  /me:
+    get:
+      summary: "Get current user preferencies."
+      
+
+  /near-bike-stalls:
+    get:
+      summary: "Get the closest bike stalls."
+      description: >
+        "Finds the nearest bike stalls to the starting point
+        and to the arrival point."
+      responses:
+        "200":
+          description: >
+            "Found bike stalls. Returns their coordinate separately
+            for the one near the starting point and the one at the arrival point."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  startingStallCoords:
+                    type: string
+                  arrivalStallCoords:
+                    type: string
+    parameters:
+      - name: start
+        in: query
+        description: "Coordinates of the starting point of the trip, comma separated."
+        required: true
+        schema:
+          type: string
+      - name: arrival
+        in: query
+        description: "Coordinates of the arrival point of the trip, comma separated"
+        required: true
+        schema:
+          type: string
+
+  /near-scooter:
+    get:
+      summary: "Get the closest e-scooter."
+      description: >
+        "Finds the nearest scooter to the starting point."
+      responses:
+        "200":
+          description: >
+            "Found scooter. Returns its coordinates."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scooterCoords:
+                    type: string
+    parameters:
+      - name: start
+        in: query
+        description: "Coordinates of the starting point of the trip, comma separated."
+        required: true
+        schema:
+          type: string
