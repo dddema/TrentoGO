@@ -32,7 +32,7 @@ const mapStyles = [
   },
   {
     "featureType": "transit.station",
-    "elementType": "labels.icon.fill",
+    "elementType": "labels.icon",
     "stylers": [
       { "color": "#B5A0FB" }
     ]

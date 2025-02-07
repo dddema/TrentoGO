@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios'
-import { compile, computed, ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   position: {
@@ -293,26 +293,12 @@ watch(query, async (newQuery, oldQuery) => {
   }
 })
 
-// query x pref utente, ritorna anche favourites places
-// 
-
-let isFavoritesOveflown = ref(Boolean)
-
-onMounted(() => {
-  const element = document.querySelector('#favorites_slider');
-  isFavoritesOveflown = doesItOverflow(element);
-}) 
-
-const doesItOverflow = (element) => {
-  return element.scrollWidth > element.clientWidth;
-}
-
 </script>
 
 <template>
-  <div class="flex flex-col items-center left-1/5 right-1/5 text-center fixed bottom-12 transition-bottom duration-300 has-focus:bottom-1/4 text-dark-gray">
-    <div class="w-2xl -mb-6 rounded-[1rem] pt-3 pb-9 border-1 border-gray-300 px-10 bg-white/30 backdrop-blur-md z-1" :class="{ hidden: !focused }">
-      <ul class="pb-4">
+  <div class="flex flex-col items-center  left-1/6 right-1/6 text-center fixed bottom-12 transition-bottom duration-300 has-focus:bottom-1/4">
+    <div class="sm:w-xl lg:w-xl mx-auto -mb-2 rounded-[1rem] pt-3 pb-5 px-3 border-1 border-gray-300 bg-neutral-50 px-10 bg-white/30 backdrop-blur-md z-1" :class="{ hidden: !focused }">
+      <ul>
         <li v-for="result in autocompleteResults" class="flex items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 py-2">
           <div class="text-center flex flex-col items-center justify-center w-4 ml-5">
             <img v-if="!result.types.includes('route')" src="../assets/icons/location.svg"/>
@@ -320,64 +306,29 @@ const doesItOverflow = (element) => {
 
             <span v-if="result.distance_meters" class="text-xs">{{ (result.distance_meters/1000).toFixed(1) }}&nbsp;km</span>
           </div>
-          <span class="text-md pl-8 truncate max-w-80">{{ `${result.terms[0].value}, `}}</span><span class="pl-1 text-gray-400 truncate" >{{ `${result.terms[1].value}` }}</span>
+          <span class="font-normal pl-8">{{ `${result.terms[0].value}, `}}</span><span class="pl-1 text-gray-400" >{{ `${result.terms[1].value}` }}</span>
         </li>
       </ul>
-      <div :class="{ 'bg-red-500' : isFavoritesOveflown }" id="favorites_slider" class="flex flex-row text-xs overflow-visible items-center h-10 overflow-x-scroll no-scrollbar mask-blur scroll-px-150 justify-center">
-          <span class="bg-transparent w-20 text-transparent">spacer</span>
-          <span class="bg-blue-500 shadow-md shadow-blue-500/50 shrink-0 px-2 py-1 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/home.svg"/>
-            <span class="ml-1">Casa</span>
-          </span>
-          <span class="bg-trento-amber shadow-md shadow-trento-amber/50 shrink-0 mx-1 px-2 py-1 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/book.svg"/>
-            <span class="ml-1">Uni</span>
-          </span>
-          <span class="bg-red-400 shadow-md shadow-red-400/50 mx-1 px-2 py-1 shrink-0 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/dumbell.svg"/>
-            <span class="ml-1">Palestra</span>
-          </span>
-          <span class="bg-blue-500 shadow-md shadow-blue-500/50 shrink-0 mx-1 px-2 py-1 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/home.svg"/>
-            <span class="ml-1">Casa</span>
-          </span>
-          <span class="bg-trento-amber shadow-md shadow-trento-amber/50 shrink-0 mx-1 px-2 py-1 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/book.svg"/>
-            <span class="ml-1">Uni</span>
-          </span>
-          <span class="bg-red-400 shadow-md shadow-red-400/50 mx-1 px-2 py-1 shrink-0 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/dumbell.svg"/>
-            <span class="ml-1">Palestra</span>
-          </span>
-          <span class="bg-trento-amber shadow-md shadow-trento-amber/50 shrink-0 mx-1 px-2 py-1 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/book.svg"/>
-            <span class="ml-1">Uni</span>
-          </span>
-          <span class="bg-red-400 shadow-md shadow-red-400/50 mx-1 px-2 py-1 shrink-0 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/dumbell.svg"/>
-            <span class="ml-1">Palestra</span>
-          </span>
-          <span class="bg-trento-amber shadow-md shadow-trento-amber/50 shrink-0 mx-1 px-2 py-1 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/book.svg"/>
-            <span class="ml-1">Uni</span>
-          </span>
-          <span class="bg-red-400 shadow-md shadow-red-400/50 mx-1 px-2 py-1 shrink-0 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/dumbell.svg"/>
-            <span class="ml-1">Palestra</span>
-          </span>
-          <span class="bg-red-400 shadow-md shadow-red-400/50 mx-1 px-2 py-1 shrink-0 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/dumbell.svg"/>
-            <span class="ml-1">Palestra</span>
-          </span>
-          <span class="bg-transparent w-20 text-transparent">spacer</span>
-
-        </div>
+      <div class="flex flex-row text-xs">
+        <span class="bg-blue-500 shadow-md shadow-blue-500/50 mx-1 px-2 py-1 rounded-full text-white flex flex-row align-center">
+          <img src="../assets/icons/home.svg"/>
+          <span class="ml-1">Casa</span>
+        </span>
+        <span class="bg-yellow-400 shadow-md shadow-amber-400/50 mx-1 px-2 py-1 rounded-full text-white  flex flex-row">
+          <img src="../assets/icons/book.svg"/>
+          <span class="ml-1">Uni</span>
+        </span>
+        <span class="bg-red-400 shadow-md shadow-red-400/50 mx-1 px-2 py-1 rounded-full text-white  flex flex-row">
+          <img src="../assets/icons/dumbell.svg"/>
+          <span class="ml-1">Palestra</span>
+        </span>
+      </div>
     </div>
 
     <div class="relative flex flex-row items-center w-64 py-2 px-3 z-10 rounded-xl shadow-md border-1 border-gray-200 bg-radial from-violet-200 to-slate-50 to-90%">
-      <img class="w-5 inline z-11 stroke-red fill-red" src="../assets/icons/search.svg"/>
+      <img class="w-5 inline z-11 " src="../assets/icons/search.svg"/>
       <input
-        class="text-dark-gray pl-2 outline-0 "
+        class="text-slate-950 pl-2 outline-0 "
         type="text"
         placeholder="Dove vuoi andare?"
         v-model="query"
