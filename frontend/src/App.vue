@@ -1,9 +1,10 @@
 <script setup>
 import { RouterView } from 'vue-router'
+import './theme.css'
 </script>
 
 <template>
-  <RouterView class="font-roboto" />
+  <RouterView class="font-[roboto]"/>
 </template>
 
 <style>

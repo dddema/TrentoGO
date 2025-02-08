@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import { GoogleMap } from "vue3-google-map"
+import { ref } from 'vue'
 // import { Loader } from "@googlemaps/js-api-loader"
 
 import SearchBar from "@/components/SearchBar.vue";
@@ -26,20 +27,103 @@ const mapStyles = [
   {
     featureType: "poi",
     stylers: [
-      {visibility: "off"}
+      {visibility: "off"},
+    ],
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "labels.icon",
+    "stylers": [
+      { "color": "#B5A0FB" }
     ]
-  }
+  },
+  {
+    "featureType": "all",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      { "color": "#9398a0" }
+    ]
+  },
+  {
+    "featureType": "all",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      { "color": "#ffffff" }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      { "color": "#e9e9e9" }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "geometry",
+    "stylers": [
+      { "color": "#f9f9f9" }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.icon",
+    "stylers": [
+      { 
+        "visibility": "off" 
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "geometry",
+    "stylers": [
+      { "color": "#ffffff" }
+    ]
+  },
+  {
+    "featureType": "landscape.natural",
+    "elementType": "geometry",
+    "stylers": [
+      { "color": "#f0f1f1" }
+    ]
+  },
+  {
+    "featureType": "landscape.man_made",
+    "elementType": "geometry",
+    "stylers": [
+      { "color": "#f0f1f1" }
+    ]
+  },
+  {
+    "featureType": "water",
+    "stylers": [
+    { "color": "#b8caf4" }
+    ]
+  },
 ]
 
 const route = useRoute()
 const isHome = computed(() => route.path == '/')
+
+
+const position = ref(trentoCoords.value)
+
+navigator.geolocation.getCurrentPosition(
+  (current_position) => {
+    position.value = current_position.coords
+  },
+  (error) => {
+    console.error(error)
+  }
+);
 
 </script>
 
 <template>
   <main>
     <div class="w-screen h-screen flex flex-row">
-      <div class="grow h-full">
+      <div class="grow h-full saturate-180">
         <GoogleMap
           class="w-full h-full"
           :api-key="GOOGLE_MAPS_API_KEY"
@@ -58,7 +142,7 @@ const isHome = computed(() => route.path == '/')
       <RouterView class="w-110 h-full p-5" />
     </div>
 
-    <SearchBar v-if="isHome" :user-position="trentoCoords" />
+    <SearchBar v-if="isHome" :position="position"/>
 
     <!-- <div class="home-content">
       <div class="back_button">
