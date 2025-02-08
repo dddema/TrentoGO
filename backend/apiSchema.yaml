@@ -126,8 +126,59 @@ paths:
 
   /me:
     get:
-      summary: "Get current user preferencies."
-      
+      summary: "Get current user info and preferences."
+      description: "Server returns the authenticated user's information and preferences."
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "Successfully retrieved user info."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  email:
+                    type: string
+                    example: "user@example.com"
+                  fullName:
+                    type: string
+                    example: "John Doe"
+                  preferences:
+                    type: object
+                    properties:
+                      theme:
+                        type: string
+                        enum: [light, dark, auto]
+                        example: "dark"
+                      ratingWarning:
+                        type: boolean
+                      favourites:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                            example: "Casa"
+                          icon:
+                            type: string
+                            example: "home"
+                          lat:
+                            type: number
+                          lng:
+                            type: number
+        "401":
+          description: "Unauthorized - User is not authenticated."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Non hai fatto l'accesso."
+
 
   /near-bike-stalls:
     get:
