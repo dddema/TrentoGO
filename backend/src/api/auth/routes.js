@@ -1,6 +1,6 @@
-import express from "express"
-import { login, logout, signup } from "./controller.js"
-import { authLimiter, authenticateToken } from "./middleware.js"
+import express from 'express'
+import { login, logout, signup } from './controller.js'
+import { authLimiter, authenticateToken } from './middleware.js'
 
 const router = express.Router()
 
