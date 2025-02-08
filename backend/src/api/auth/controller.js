@@ -32,8 +32,7 @@ const signup = async (req, res) => {
     const newUser = new User({
       email: req.body.email,
       password: md5(req.body.password),
-      name: req.body.name,
-      surname: req.body.surname
+      fullName: req.body.fullName
     })
 
     await newUser.save()
