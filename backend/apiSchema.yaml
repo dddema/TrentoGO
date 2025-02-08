@@ -1,0 +1,239 @@
+openapi: 3.0.0
+info:
+  title: "trentogo"
+  description: >
+    "webapp to be able to see all of the means of transportation
+    in a single application, without having to switch between all different apps."
+  version: 0.1.1
+
+#servers:
+#  - url: http://api.example.com/v1
+#  description: Optional server description, e.g. Main (production) server
+
+paths:
+  /auth:
+    post:
+      summary: "Authentication of a user through credentials."
+      description: > 
+        "Enables users to authenticate themselves to the web service,
+        using email and password."
+      requestBody:
+        description: "Credentials as email and password."
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: "Authentication succesfull. Returns auth token (JWT)."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        "403":
+          description: "Authentication failed, because of wrong/invalid credentials."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Email o password non corretta/e."
+
+  /logout:
+    get:
+      summary: "Logs out the user."
+      description: "Logs out the user, expiring the auth token."
+      responses:
+        "200":
+          description: "Logged out succesfully."
+        "400":
+          description: "User is not logged in."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Non hai fatto l'accesso."
+  
+  /signup:
+    post:
+      summary: "Creation of a new user account."
+      description: >
+        "Registers a new user in the database
+        with the info provided in the request."
+      requestBody:
+        description: >
+          "Credentials as email and password and
+          personal user's info."
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+                - surname
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+                surname:
+                  type: string
+      responses:
+        "200":
+          description: >
+            "Account created successfully.
+            Returns the id."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+        "409":
+          description: "Email already registered in the app."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Email già utilizzata."
+
+  /me:
+    get:
+      summary: "Get current user info and preferences."
+      description: "Server returns the authenticated user's information and preferences."
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "Successfully retrieved user info."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  email:
+                    type: string
+                    example: "user@example.com"
+                  fullName:
+                    type: string
+                    example: "John Doe"
+                  preferences:
+                    type: object
+                    properties:
+                      theme:
+                        type: string
+                        enum: [light, dark, auto]
+                        example: "dark"
+                      ratingWarning:
+                        type: boolean
+                      favourites:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                            example: "Casa"
+                          icon:
+                            type: string
+                            example: "home"
+                          lat:
+                            type: number
+                          lng:
+                            type: number
+        "401":
+          description: "Unauthorized - User is not authenticated."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Non hai fatto l'accesso."
+
+
+  /near-bike-stalls:
+    get:
+      summary: "Get the closest bike stalls."
+      description: >
+        "Finds the nearest bike stalls to the starting point
+        and to the arrival point."
+      responses:
+        "200":
+          description: >
+            "Found bike stalls. Returns their coordinate separately
+            for the one near the starting point and the one at the arrival point."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  startingStallCoords:
+                    type: string
+                  arrivalStallCoords:
+                    type: string
+    parameters:
+      - name: start
+        in: query
+        description: "Coordinates of the starting point of the trip, comma separated."
+        required: true
+        schema:
+          type: string
+      - name: arrival
+        in: query
+        description: "Coordinates of the arrival point of the trip, comma separated"
+        required: true
+        schema:
+          type: string
+
+  /near-scooter:
+    get:
+      summary: "Get the closest e-scooter."
+      description: >
+        "Finds the nearest scooter to the starting point."
+      responses:
+        "200":
+          description: >
+            "Found scooter. Returns its coordinates."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scooterCoords:
+                    type: string
+    parameters:
+      - name: start
+        in: query
+        description: "Coordinates of the starting point of the trip, comma separated."
+        required: true
+        schema:
+          type: string

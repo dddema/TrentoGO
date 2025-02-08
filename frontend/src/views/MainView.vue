@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { RouterLink, useRoute } from "vue-router";
 import { GoogleMap } from "vue3-google-map"
 import { ref } from 'vue'
 // import { Loader } from "@googlemaps/js-api-loader"
@@ -139,7 +139,7 @@ navigator.geolocation.getCurrentPosition(
           :styles="mapStyles"
         ></GoogleMap>
       </div>
-      <RouterView class="w-110 h-full" />
+      <RouterView class="w-110 h-full p-5" />
     </div>
 
     <SearchBar v-if="isHome" :position="position"/>
