@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import rateLimit from "express-rate-limit"
-import { BlacklistedToken } from "../../model"
+import { BlacklistedToken } from "../../model.js"
 
 const authenticateToken = async (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1]

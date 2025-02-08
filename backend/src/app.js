@@ -5,7 +5,7 @@ import bodyParser from 'body-parser'
 import jwt from 'jsonwebtoken'
 import md5 from 'md5'
 import rateLimit from 'express-rate-limit'
-import api from './api'
+import api from './api/index.js'
 
 const app = express()
 const port = 3000

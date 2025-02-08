@@ -1,4 +1,4 @@
-import { User, BlacklistedToken } from "../../model"
+import { User, BlacklistedToken } from "../../model.js"
 
 const login = async (req, res) => {
   const { email, password } = req.body
@@ -7,7 +7,7 @@ const login = async (req, res) => {
   if (user) {
     const userPayload = { id: user.id, email: user.email }
     const token = jwt.sign(userPayload, process.env.JWT_SECRET, { expiresIn: '5m' })
-    
+
     res.status(200).json({ token })
   } else {
     res.status(403).json({ message: "Email o password non corretta/e." })
