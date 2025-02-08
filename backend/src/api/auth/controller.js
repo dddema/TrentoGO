@@ -1,4 +1,6 @@
-import { User, BlacklistedToken } from "../../model.js"
+import jwt from 'jsonwebtoken'
+import md5 from 'md5'
+import { User, BlacklistedToken } from '../../model.js'
 
 const login = async (req, res) => {
   const { email, password } = req.body
@@ -10,7 +12,7 @@ const login = async (req, res) => {
 
     res.status(200).json({ token })
   } else {
-    res.status(403).json({ message: "Email o password non corretta/e." })
+    res.status(403).json({ message: 'Email o password non corretta/e.' })
   }
 }
 
@@ -27,7 +29,7 @@ const logout = async (req, res) => {
 
 const signup = async (req, res) => {
   if (await User.exists({ email: req.body.email })) {
-    res.status(409).json({ message: "Email già utilizzata." })
+    res.status(409).json({ message: 'Email già utilizzata.' })
   } else {
     const newUser = new User({
       email: req.body.email,
