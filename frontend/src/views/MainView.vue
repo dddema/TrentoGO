@@ -122,8 +122,8 @@ navigator.geolocation.getCurrentPosition(
 
 <template>
   <main>
-    <div class="w-screen h-screen flex flex-row saturate-180">
-      <div class="grow h-full">
+    <div class="w-screen h-screen flex flex-row">
+      <div class="grow h-full saturate-180">
         <GoogleMap
           class="w-full h-full"
           :api-key="GOOGLE_MAPS_API_KEY"
