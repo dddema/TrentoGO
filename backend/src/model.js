@@ -2,7 +2,11 @@ import mongoose from 'mongoose';
 
 const favouritePlaceSchema = new mongoose.Schema({
   title: String,
-  icon: String,
+  icon: {
+    type: String,
+    enum: ['home', 'work', 'star']
+  },
+  color: String,
   lat: Number,
   lng: Number
 })
