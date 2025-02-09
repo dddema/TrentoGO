@@ -26,7 +26,7 @@ defineEmits(['buttonClick'])
 </script>
 
 <template>
-  <div @click="$emit('buttonClick')" :class="['bg-'+props.color, 'text-'+props.textColor]" class="m-1 flex w-90 text-xl font-bold justify-center p-3 rounded-full border-trento-blue border-2">
+  <div @click="$emit('buttonClick')" :class="['bg-'+props.color, 'text-'+props.textColor]" class="m-1 flex w-90 text-xl font-bold justify-center p-3 rounded-full border-trento-blue border-2"  >
     <img v-if="props.icon" :src="props.icon" alt="">
     <span class="pl-1">{{ props.text }}</span>
   </div>
