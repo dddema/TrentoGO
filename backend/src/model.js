@@ -44,6 +44,13 @@ const userSchema = new mongoose.Schema({
   creditCardInfo: creditCardInfoSchema
 })
 
+const bikeStallSchema = new mongoose.Schema({
+  name: String,
+  address: String,
+  lat: Number,
+  lng: Number
+})
+
 const blacklistedTokenSchema = new mongoose.Schema({
   token: String,
   expireAt: {
@@ -53,6 +60,7 @@ const blacklistedTokenSchema = new mongoose.Schema({
 })
 
 const User = new mongoose.model('User', userSchema)
+const BikeStall = new mongoose.model('BikeStall', bikeStallSchema)
 const BlacklistedToken = new mongoose.model('BlacklistedToken', blacklistedTokenSchema)
 
-export { User, BlacklistedToken }
+export { User, BikeStall, BlacklistedToken }

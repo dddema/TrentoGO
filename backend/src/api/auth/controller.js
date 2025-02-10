@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import md5 from 'md5'
 import { User, BlacklistedToken } from '../../model.js'
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body
   const user = await User.findOne({ email, password: md5(password) }, '_id')
 
@@ -16,7 +16,7 @@ const login = async (req, res) => {
   }
 }
 
-const logout = async (req, res) => {
+export const logout = async (req, res) => {
   const blacklistedToken = new BlacklistedToken({
     token: req.user.token,
     expireAt: new Date(req.user.exp * 1000 /* seconds to ms */)
@@ -27,7 +27,7 @@ const logout = async (req, res) => {
   res.sendStatus(200)
 }
 
-const signup = async (req, res) => {
+export const signup = async (req, res) => {
   if (await User.exists({ email: req.body.email })) {
     res.status(409).json({ message: 'Email già utilizzata.' })
   } else {
@@ -42,5 +42,3 @@ const signup = async (req, res) => {
     res.status(200).json({ id: newUser.id, email: newUser.email })
   }
 }
-
-export { login, logout, signup }
