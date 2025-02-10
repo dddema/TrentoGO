@@ -140,7 +140,7 @@ navigator.geolocation.getCurrentPosition(
           :styles="mapStyles"
         ></GoogleMap>
       </div>
-      <RouterView class="shadow-xl z-1 overflow-auto w-110 h-full p-5 bg-trento-white" />
+      <RouterView class="shadow-xl z-1 overflow-auto w-110 h-full bg-trento-white" />
     </div>
 
     <SearchBar v-if="isHome" :position="position"/>
