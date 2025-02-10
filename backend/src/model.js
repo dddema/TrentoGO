@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema({
   password: String,
   fullName: String,
   isGoogleAuth: Boolean,
+  googleId: String,
   preferences: {
     type: userPreferencesSchema,
     default: {}

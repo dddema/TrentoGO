@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import md5 from 'md5'
+import { OAuth2Client } from 'google-auth-library'
 import { User, BlacklistedToken } from '../../model.js'
 
 export const login = async (req, res) => {
@@ -41,4 +42,32 @@ export const signup = async (req, res) => {
     
     res.status(200).json({ id: newUser.id, email: newUser.email })
   }
+}
+
+export const googleAuth = async (req, res) => {
+  const client = new OAuth2Client()
+  const ticket = await client.verifyIdToken({
+    idToken: req.params.idToken,
+    audience: process.env.GOOGLE_CLIENT_ID
+  })
+  const payload = ticket.getPayload()
+  const googleId = payload.sub
+  
+  let user = await User.findOne({ googleId }, '_id email')
+  
+  if (!user) {
+    user = new User({
+      email: payload.email,
+      fullName: payload.name,
+      isGoogleAuth: true,
+      googleId
+    })
+
+    await user.save()
+  }
+
+  const userPayload = { id: user.id, email: user.email };
+  const token = jwt.sign(userPayload, process.env.JWT_SECRET, { expiresIn: '5m' })
+
+  res.status(200).json({ token })
 }
