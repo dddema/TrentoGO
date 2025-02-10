@@ -4,3 +4,6 @@ Repository del Progetto di IS.
 Prj. Name: TrentoGO
 
 Description: webapp to be able to see all of the means of transportation in a single application, without having to switch between all different apps.
+
+Team Members:
+Daniele De Marco & Andrea Pollini & Christian Baciu
