@@ -36,7 +36,10 @@ const userSchema = new mongoose.Schema({
   email: String,
   password: String,
   fullName: String,
-  isGoogleAuth: Boolean,
+  isGoogleAuth: {
+    type: Boolean,
+    default: false
+  },
   googleId: String,
   preferences: {
     type: userPreferencesSchema,
