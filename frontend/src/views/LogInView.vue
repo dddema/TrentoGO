@@ -2,18 +2,45 @@
 import BackButton from "@/components/BackButton.vue";
 import RoundButton from "@/components/RoundButton.vue";
 import GoogleIcon from "@/assets/icons/GoogleIcon.svg"
+import axios from "axios";
 
-function googleSignIn() {
+// import { googleAuthCodeLogin } from "vue3-google-login"
+// const Glogin = () => {
+//   googleAuthCodeLogin().then((response) => {
+//     console.log("Handle the response", response)
+//   })
+// }
+
+
+// import { decodeCredential } from 'vue3-google-login'
+
+const callback = async (response) => {
+  // decodeCredential will retrive the JWT payload from the credential
+  // const userData = decodeCredential(response.credential)
+  // if (userData!=undefined) {
+    try {
+      const url = 'https://trentogo.onrender.com/auth/google'
+      const res = await axios.get(url, {
+        params: {
+          idToken: response.credentials
+        }
+      })
+      console.log(res)
+    } catch (error) {
+      console.error(error)
+    }
+    
+  //   console.log("Handle the userData, FOLLOWING:", userData)
+  // } 
+}
+
+
+// function signUp() {
   
-}
+// }
 
-function signUp() {
-  
-}
-
-function logIn() {
-
-}
+// function logIn() {
+// }
 
 </script>
 
@@ -23,7 +50,7 @@ function logIn() {
     <img class="py-30 w-90" src="../assets/TrentoGoLogo.png" alt="">
     
     <div class="h-full flex flex-col justify-end pb-5 items-center">
-      <RoundButton @button-click="googleSignIn" text="Continua con Google" color="trento-white" text-color="dark-gray" :icon="GoogleIcon"/>
+      <GoogleLogin :callback="callback" prompt auto-login />
       
       <div class="flex items-center w-full my-5">
         <hr class="flex-grow border-t border-light-gray">
@@ -32,7 +59,8 @@ function logIn() {
       </div>
       
       <RoundButton @button-click="TrentoGoSignUp" text="Crea un Account"/>
-      <RoundButton @button-click="googleSignIn" text="Accedi o Continua come Ospite" color="trento-blue/30" text-color="trento-blue" class="mb-5"/>
+      
+      <RoundButton text="Accedi o Continua come Ospite" color="trento-blue/30" text-color="trento-blue" class="mb-5"/>
       <span class="text-dark-gray">Continuando accetti i nostri <span class="text-trento-blue underline font-semibold">Terms of service.</span></span>
     </div>
   </div>
