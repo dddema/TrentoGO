@@ -17,7 +17,7 @@ function click() {
 </script>
 
 <template>
-  <div @click="click" id="gobackbutton" class="flex w-full">
+  <div @click="click" id="gobackbutton" class="cursor-pointer flex w-full">
     <img src="../assets/icons/arrow_back.svg" alt="Torna Indietro" />
     <span class="pl-1">{{ props.text }}</span>
   </div>
