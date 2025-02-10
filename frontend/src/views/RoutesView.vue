@@ -123,6 +123,42 @@ fetchData().then(() => console.log(transportResults.value))
           <span class="text-md pl-8 truncate max-w-80">{{ `${result.terms[0].value}, `}}</span><span class="pl-1 text-gray-400 truncate" >{{ `${result.terms[1].value}` }}</span>
         </li>
       </ul> -->
+      <ul>
+        <li class="cursor-pointer flex flex-row items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 px-3">
+          <img class="w-12" src="../assets/icons/directions_bus.svg"/>
+          
+          <div class="flex flex-col items-left justify-center p-4 pl-8">
+            <div class="font-medium text-dark-gray text-lg">
+                <span class="text-trento-blue pr-1">Autobus</span><span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full place-self-center"/>15 min<span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full" />1€              
+            </div>
+            <div class="flex flex-row">
+              <span class="w-5 h-5 pt-0.5 mr-1 bg-amber-300 rounded-md text-center font-medium text-white flex items-center justify-center place-self-center text-md">5</span>Piazza Dante <img class="mx-2" src="../assets/icons/walking.svg"/> 5 min a piedi</div>
+          </div>
+        </li>
+        <li class="cursor-pointer flex flex-row items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 px-3">
+          <img class="w-12" src="../assets/icons/directions_bus.svg"/>
+          
+          <div class="flex flex-col items-left justify-center p-4 pl-8">
+            <div class="font-medium text-dark-gray text-lg">
+                <span class="text-trento-blue pr-1">Autobus</span><span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full place-self-center"/>15 min<span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full" />1€              
+            </div>
+            <div class="flex flex-row">
+              <span class="w-5 h-5 pt-0.5 mr-1 bg-amber-300 rounded-md text-center font-medium text-white flex items-center justify-center place-self-center text-md">5</span>Piazza Dante <img class="mx-2" src="../assets/icons/walking.svg"/> 5 min a piedi</div>
+          </div>
+        </li>
+        <li class="cursor-pointer flex flex-row items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 px-3">
+          <img class="w-12" src="../assets/icons/directions_bus.svg"/>
+          
+          <div class="flex flex-col items-left justify-center p-4 pl-8">
+            <div class="font-medium text-dark-gray text-lg">
+                <span class="text-trento-blue pr-1">Autobus</span><span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full place-self-center"/>15 min<span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full" />1€              
+            </div>
+            <div class="flex flex-row">
+              <span class="w-5 h-5 pt-0.5 mr-1 bg-amber-300 rounded-md text-center font-medium text-white flex items-center justify-center place-self-center text-md">5</span>Piazza Dante <img class="mx-2" src="../assets/icons/walking.svg"/> 5 min a piedi</div>
+          </div>
+        </li>
+
+      </ul>
     </div>
       
   </div>
