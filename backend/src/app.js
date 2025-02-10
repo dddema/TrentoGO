@@ -17,6 +17,10 @@ mongoose.connect(process.env.MONGODB_CONN_STRING).catch(err => console.error(err
 app.use(bodyParser.json())
 app.use(api)
 
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'Risorsa non trovata.' })
+})
+
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)
 })

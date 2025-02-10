@@ -87,16 +87,13 @@ paths:
               required:
                 - email
                 - password
-                - name
-                - surname
+                - fullName
               properties:
                 email:
                   type: string
                 password:
                   type: string
-                name:
-                  type: string
-                surname:
+                fullName:
                   type: string
       responses:
         "200":
@@ -124,7 +121,7 @@ paths:
                     type: string
                     example: "Email già utilizzata."
 
-  /me:
+  /user:
     get:
       summary: "Get current user info and preferences."
       description: "Server returns the authenticated user's information and preferences."
@@ -138,8 +135,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  id:
-                    type: string
                   email:
                     type: string
                     example: "user@example.com"
@@ -156,18 +151,22 @@ paths:
                       ratingWarning:
                         type: boolean
                       favourites:
-                        type: object
-                        properties:
-                          title:
-                            type: string
-                            example: "Casa"
-                          icon:
-                            type: string
-                            example: "home"
-                          lat:
-                            type: number
-                          lng:
-                            type: number
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            title:
+                              type: string
+                              example: "Casa"
+                            icon:
+                              type: string
+                              example: "home"
+                            color:
+                              type: string
+                            lat:
+                              type: number
+                            lng:
+                              type: number
         "401":
           description: "Unauthorized - User is not authenticated."
           content:
@@ -179,46 +178,219 @@ paths:
                     type: string
                     example: "Non hai fatto l'accesso."
 
-
-  /near-bike-stalls:
-    get:
-      summary: "Get the closest bike stalls."
-      description: >
-        "Finds the nearest bike stalls to the starting point
-        and to the arrival point."
+  /user/preferences:
+    put:
+      summary: "Update user preferences."
+      description: "Allows the authenticated user to update their preferences."
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: "User preferences to be updated."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                theme:
+                  type: string
+                  enum: [light, dark, auto]
+                ratingWarning:
+                  type: boolean
+                favourites:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      icon:
+                        type: string
+                        enum: [home, work, star]
+                      color:
+                        type: string
+                      lat:
+                        type: number
+                      lng:
+                        type: number
       responses:
         "200":
-          description: >
-            "Found bike stalls. Returns their coordinate separately
-            for the one near the starting point and the one at the arrival point."
+          description: "Successfully updated user preferences."
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  startingStallCoords:
+                  theme:
                     type: string
-                  arrivalStallCoords:
+                    enum: [light, dark, auto]
+                  ratingWarning:
+                    type: boolean
+                  favourites:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                        icon:
+                          type: string
+                          enum: [home, work, star]
+                        color:
+                          type: string
+                        lat:
+                          type: number
+                        lng:
+                          type: number
+        "401":
+          description: "Unauthorized - User is not authenticated."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
                     type: string
-    parameters:
-      - name: start
-        in: query
-        description: "Coordinates of the starting point of the trip, comma separated."
-        required: true
-        schema:
-          type: string
-      - name: arrival
-        in: query
-        description: "Coordinates of the arrival point of the trip, comma separated"
-        required: true
-        schema:
-          type: string
+                    example: "Non hai fatto l'accesso."
 
-  /near-scooter:
+  /user/credit-card-info:
     get:
-      summary: "Get the closest e-scooter."
-      description: >
-        "Finds the nearest scooter to the starting point."
+      summary: "Get user credit card information."
+      description: "Returns the authenticated user's credit card information."
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "Successfully retrieved credit card information."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ownerName:
+                    type: string
+                  ownerSurname:
+                    type: string
+                  number:
+                    type: string
+                  cvc:
+                    type: string
+                  expireAt:
+                    type: string
+                    format: date
+        "401":
+          description: "Unauthorized - User is not authenticated."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Non hai fatto l'accesso."
+
+    patch:
+      summary: "Update user credit card information."
+      description: "Allows the authenticated user to update their credit card information."
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: "Credit card information to be updated."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ownerName:
+                  type: string
+                ownerSurname:
+                  type: string
+                number:
+                  type: string
+                cvc:
+                  type: string
+                expireAt:
+                  type: string
+                  format: date
+      responses:
+        "200":
+          description: "Successfully updated credit card information."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ownerName:
+                    type: string
+                  ownerSurname:
+                    type: string
+                  number:
+                    type: string
+                  cvc:
+                    type: string
+                  expireAt:
+                    type: string
+                    format: date
+        "401":
+          description: "Unauthorized - User is not authenticated."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Non hai fatto l'accesso."
+
+  /user/favourites:
+    post:
+      summary: "Add a favourite place."
+      description: "Allows the authenticated user to add a favourite place."
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: "Favourite place to be added."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+
+  /transport/near-bike-stall:
+    get:
+      summary: "Get the closest bike stall."
+      description: "Finds the nearest bike stall to the supplied location."
+      responses:
+        "200":
+          description: >
+            "Found bike stall. Returns its coordinates."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lat:
+                    type: number
+                  lng:
+                    type: number
+    parameters:
+      - name: lat
+        in: query
+        description: "Latitude of the point"
+        required: true
+        schema:
+          type: number
+      - name: long
+        in: query
+        description: "Longitude of the point"
+        required: true
+        schema:
+          type: number
+
+  /transport/near-scooter:
+    get:
+      summary: "Get the closest scooter."
+      description: "Finds the nearest scooter to the supplied location."
       responses:
         "200":
           description: >
@@ -228,12 +400,20 @@ paths:
               schema:
                 type: object
                 properties:
-                  scooterCoords:
-                    type: string
+                  lat:
+                    type: number
+                  lng:
+                    type: number
     parameters:
-      - name: start
+      - name: lat
         in: query
-        description: "Coordinates of the starting point of the trip, comma separated."
+        description: "Latitude of the point"
         required: true
         schema:
-          type: string
+          type: number
+      - name: lng
+        in: query
+        description: "Longitude of the point"
+        required: true
+        schema:
+          type: number

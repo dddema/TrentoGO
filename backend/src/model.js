@@ -1,47 +1,66 @@
 import mongoose from 'mongoose';
 
 const favouritePlaceSchema = new mongoose.Schema({
-    title: String,
-    icon: String,
-    lat: Number,
-    lng: Number
+  title: String,
+  icon: {
+    type: String,
+    enum: ['home', 'work', 'star']
+  },
+  color: String,
+  lat: Number,
+  lng: Number
 })
 
 const userPreferencesSchema = new mongoose.Schema({
-    theme: String,
-    ratingWarning: Boolean,
-    favourites: [favouritePlaceSchema]
+  theme: {
+    type: String,
+    enum: ['light', 'dark', 'auto'],
+    default: 'auto'
+  },
+  ratingWarning: {
+    type: Boolean,
+    default: true
+  },
+  favourites: [favouritePlaceSchema]
 })
 
 const creditCardInfoSchema = new mongoose.Schema({
-    ownerName: String,
-    ownerSurname: String,
-    number: String,
-    cvc: String,
-    expireAt: Date
+  ownerName: String,
+  ownerSurname: String,
+  number: String,
+  cvc: String,
+  expireAt: Date
 })
 
 const userSchema = new mongoose.Schema({
-    email: String,
-    password: String,
-    fullName: String,
-    isGoogleAuth: Boolean,
-    preferences: userPreferencesSchema,
-    creditCardInfo: creditCardInfoSchema
+  email: String,
+  password: String,
+  fullName: String,
+  isGoogleAuth: Boolean,
+  preferences: {
+    type: userPreferencesSchema,
+    default: {}
+  },
+  creditCardInfo: creditCardInfoSchema
+})
+
+const bikeStallSchema = new mongoose.Schema({
+  name: String,
+  address: String,
+  lat: Number,
+  lng: Number
 })
 
 const blacklistedTokenSchema = new mongoose.Schema({
-    token: String,
-    expireAt: {
-        type: Date,
-        expires: 0
-    }
+  token: String,
+  expireAt: {
+    type: Date,
+    expires: 0
+  }
 })
 
-const FavouritePlace = new mongoose.model('FavouritePlace', favouritePlaceSchema)
-const UserPreferences = new mongoose.model('UserPreferences', userPreferencesSchema)
-const CreditCardInfo = new mongoose.model('CreditCardInfo', creditCardInfoSchema)
 const User = new mongoose.model('User', userSchema)
+const BikeStall = new mongoose.model('BikeStall', bikeStallSchema)
 const BlacklistedToken = new mongoose.model('BlacklistedToken', blacklistedTokenSchema)
 
-export { User, FavouritePlace, UserPreferences, CreditCardInfo, BlacklistedToken }
+export { User, BikeStall, BlacklistedToken }
