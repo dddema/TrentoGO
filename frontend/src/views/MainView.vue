@@ -123,6 +123,7 @@ navigator.geolocation.getCurrentPosition(
 <template>
   <main>
     <div class="w-screen h-screen flex flex-row">
+      <img src="../assets/icons/TrentoGoLogo.svg" class="fixed z-100 opacity-40 w-60 p-4 select-none">
       <div class="grow h-full saturate-180">
         <GoogleMap
           class="w-full h-full"
@@ -139,7 +140,7 @@ navigator.geolocation.getCurrentPosition(
           :styles="mapStyles"
         ></GoogleMap>
       </div>
-      <RouterView class="overflow-auto w-110 h-full p-5" />
+      <RouterView class="shadow-xl z-1 overflow-auto w-110 h-full p-5 bg-trento-white" />
     </div>
 
     <SearchBar v-if="isHome" :position="position"/>

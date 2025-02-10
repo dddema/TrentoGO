@@ -8,7 +8,6 @@ let isValidPassword = true;
 let isEmptyEmail = true;
 let isEmptyPassword = true;
 
-
 function validateEmail(email) {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailPattern.test(email)
@@ -40,7 +39,7 @@ function sendSignIn() {
       <TextField type="email" placeholder="email" :callBackFunction="validateEmail"/>
       <TextField type="password" placeholder="password" :callBackFunction="validatePassword"/>
 
-      <RoundButton @button-click="sendSignIn" text="Crea account" color="bg-trento-blue/30" text-color="trento-blue" hover-color="trento-blue/40" class="mt-50 mb-3"/>
+      <RoundButton @button-click="sendSignIn" text="Crea account" color="bg-trento-blue/30" text-color="text-trento-blue" hover-color="hover:bg-trento-blue/40" class="mt-50 mb-3"/>
       <span class="text-dark-gray">Continuando accetti i nostri <span class="text-trento-blue underline font-semibold">Terms of service.</span></span>
     </div>
   </div>

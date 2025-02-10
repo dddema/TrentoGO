@@ -313,10 +313,10 @@ const doesItOverflow = (element) => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center left-1/5 right-1/5 text-center fixed bottom-12 transition-bottom duration-300 has-focus:bottom-1/4 text-dark-gray">
+  <div class="flex flex-col items-center left-1/5 right-1/5 text-center fixed bottom-22 transition-bottom duration-300 has-focus:bottom-1/4 text-dark-gray">
     <div class="w-2xl -mb-6 rounded-[1rem] pt-3 pb-9 border-1 border-gray-300 px-10 bg-white/30 backdrop-blur-md z-1" :class="{ hidden: !focused }">
       <ul class="pb-4">
-        <li v-for="result in autocompleteResults" class="flex items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 py-2">
+        <li v-for="result in autocompleteResults" class="cursor-pointer flex items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 py-2">
           <div class="text-center flex flex-col items-center justify-center w-4 ml-5">
             <img v-if="!result.types.includes('route')" src="../assets/icons/location.svg"/>
             <img v-else src="../assets/icons/road.svg"/>
@@ -377,16 +377,16 @@ const doesItOverflow = (element) => {
         </div>
     </div>
 
-    <div class="relative flex flex-row items-center w-64 py-2 px-3 z-10 rounded-xl shadow-md border-1 border-gray-200 bg-radial from-violet-200 to-slate-50 to-90%">
-      <img class="w-5 inline z-11 stroke-red fill-red" src="../assets/icons/search.svg"/>
+    <div class="relative flex flex-row items-center w-74 py-2 px-3 z-10 rounded-xl shadow-md border-1 border-gray-200 bg-radial from-violet-200 to-slate-50 to-90%">
+      <img class="w-5 inline z-11" src="../assets/icons/search.svg"/>
       <input
-        class="text-dark-gray pl-2 outline-0 "
+        class="text-dark-gray pl-2 outline-0 w-full"
         type="text"
         placeholder="Dove vuoi andare?"
         v-model="query"
         @focusin="focused = true"
         @focusout="focused = false"
-      >
+      />
     </div>
     
     
