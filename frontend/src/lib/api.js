@@ -103,6 +103,20 @@ export const signUp = async (email, password, fullName) => {
   }
 }
 
+/**
+ * Retrieves the current user's information and preferences.
+ * 
+ * @returns {Promise<Object>} An object containing the result of the operation and user data
+ * or an error message if the request failed.
+ * 
+ * @example
+ * const response = await getUser();
+ * if (response.result) {
+ *   console.log('User data:', response);
+ * } else {
+ *   console.error('Error fetching user data:', response.message);
+ * }
+ */
 export const getUser = async () => {
   try {
     const response = await api.get('user/')
@@ -114,6 +128,22 @@ export const getUser = async () => {
   }
 }
 
+/**
+ * Updates the user's preferences.
+ * 
+ * @param {string} theme - The user's preferred theme.
+ * @param {boolean} ratingWarning - The user's rating warning preference.
+ * @returns {Promise<Object>} An object containing the result of the operation and updated preferences
+ * or an error message if the request failed.
+ * 
+ * @example
+ * const response = await updatePreferences('dark', true);
+ * if (response.result) {
+ *   console.log('Preferences updated:', response);
+ * } else {
+ *   console.error('Error updating preferences:', response.message);
+ * }
+ */
 export const updatePreferences = async (theme, ratingWarning) => {
   try {
     const response = await api.patch('user/preferences', { theme, ratingWarning })
@@ -125,6 +155,20 @@ export const updatePreferences = async (theme, ratingWarning) => {
   }
 }
 
+/**
+ * Retrieves the user's credit card information.
+ * 
+ * @returns {Promise<Object>} An object containing the result of the operation and credit card information
+ * or an error message if the request failed.
+ * 
+ * @example
+ * const response = await getCreditCardInfo();
+ * if (response.result) {
+ *   console.log('Credit card info:', response);
+ * } else {
+ *   console.error('Error fetching credit card info:', response.message);
+ * }
+ */
 export const getCreditCardInfo = async () => {
   try {
     const response = await api.get('user/credit-card-info')
@@ -136,6 +180,25 @@ export const getCreditCardInfo = async () => {
   }
 }
 
+/**
+ * Sets the user's credit card information.
+ * 
+ * @param {string} ownerName - The credit card owner's name.
+ * @param {string} ownerSurname - The credit card owner's surname.
+ * @param {string} number - The credit card number.
+ * @param {string} cvc - The credit card CVC.
+ * @param {string} expireAt - The credit card expiration date.
+ * @returns {Promise<Object>} An object containing the result of the operation and updated credit card information
+ * or an error message if the request failed.
+ * 
+ * @example
+ * const response = await setCreditCardInfo('John', 'Doe', '1234567890123456', '123', '12/23');
+ * if (response.result) {
+ *   console.log('Credit card info updated:', response);
+ * } else {
+ *   console.error('Error updating credit card info:', response.message);
+ * }
+ */
 export const setCreditCardInfo = async (ownerName, ownerSurname, number, cvc, expireAt) => {
   try {
     const response = await api.put('user/credit-card-info', { ownerName, ownerSurname, number, cvc, expireAt })
@@ -147,6 +210,25 @@ export const setCreditCardInfo = async (ownerName, ownerSurname, number, cvc, ex
   }
 }
 
+/**
+ * Adds a favourite place for the user.
+ * 
+ * @param {string} title - The title of the favourite place.
+ * @param {string} icon - The icon representing the favourite place.
+ * @param {string} color - The color representing the favourite place.
+ * @param {number} lat - The latitude of the favourite place.
+ * @param {number} lng - The longitude of the favourite place.
+ * @returns {Promise<Object>} An object containing the result of the operation and updated favourites
+ * or an error message if the request failed.
+ * 
+ * @example
+ * const response = await addFavouritePlace('Home', 'house', 'blue', 46.066, 11.121);
+ * if (response.result) {
+ *   console.log('Favourite place added:', response.favourites);
+ * } else {
+ *   console.error('Error adding favourite place:', response.message);
+ * }
+ */
 export const addFavouritePlace = async (title, icon, color, lat, lng) => {
   try {
     const response = await api.post('user/favourites', { title, icon, color, lat, lng })
@@ -158,6 +240,21 @@ export const addFavouritePlace = async (title, icon, color, lat, lng) => {
   }
 }
 
+/**
+ * Deletes a favourite place for the user.
+ * 
+ * @param {string} id - The ID of the favourite place to delete.
+ * @returns {Promise<Object>} An object containing the result of the operation and updated favourites
+ * or an error message if the request failed.
+ * 
+ * @example
+ * const response = await deleteFavouritePlace('12345');
+ * if (response.result) {
+ *   console.log('Favourite place deleted:', response.favourites);
+ * } else {
+ *   console.error('Error deleting favourite place:', response.message);
+ * }
+ */
 export const deleteFavouritePlace = async (id) => {
   try {
     const response = await api.delete(`user/favourites/${id}`)
