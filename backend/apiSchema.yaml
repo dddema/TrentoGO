@@ -59,7 +59,7 @@ paths:
       responses:
         "200":
           description: "Logged out succesfully."
-        "400":
+        "403":
           description: "User is not logged in."
           content:
             application/json:
