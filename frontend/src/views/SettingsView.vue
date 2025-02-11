@@ -1,13 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
 import { SunIcon, MoonIcon } from '@heroicons/vue/24/solid'
 import BackButton from '@/components/BackButton.vue'
 import RoundButton from '@/components/RoundButton.vue'
+import { getUser, getCreditCardInfo } from '@/lib/api'
 
 const name = ref('')
 const email = ref('')
-const password = ref('password123')
+const password = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
 const passwordFieldType = ref('password')
@@ -59,45 +59,52 @@ const toggleTheme = () => {
     theme.value = theme.value === 'Chiaro' ? 'Scuro' : 'Chiaro'
 }
 
-// const fetchUserDetails = async () => {
-//     try {
-//         const response = await axios.get('/api/user/your-user-id')
-//         name.value = response.data.name
-//         email.value = response.data.email
-//     } catch (error) {
-//         console.error('Error fetching user details:', error)
-//     }
-// }
+const fetchUserDetails = async () => {
+    try {
+        const response = await getUser()
+        if (response.result) {
+            console.log("getU: " + response)
+            name.value = response.fullName
+            email.value = response.email
+        }
+    } catch (error) {
+        console.error('Error fetching user details:', error)
+    }
+}
 
-// const fetchPaymentMethod = async () => {
-//     try {
-//         const response = await axios.get('/api/payment-method/your-user-id')
-//         paymentMethod.value = response.data.paymentMethod
-//     } catch (error) {
-//         console.error('Error fetching payment method:', error)
-//     }
-// }
+const fetchPaymentMethod = async () => {
+    try {
+        const response = await getCreditCardInfo()
+        console.log("getCC: " + response)
+        if (response.result) {
+            paymentMethod.value = response.creditCardInfo
+        }
+    } catch (error) {
+        console.error('Error fetching payment method:', error)
+    }
+}
 
-// const fetchFavoritePlaces = async () => {
-//     try {
-//         const response = await axios.get('/api/favorite-places/your-user-id')
-//         favoritePlaces.value = undefined
-//     } catch (error) {
-//         console.error('Error fetching favorite places:', error)
-//     }
-// }
+const fetchFavoritePlaces = async () => {
+    try {
+        const response = await getUser()
+        if (response.result) {
+            favoritePlaces.value = response.favourites
+        }
+    } catch (error) {
+        console.error('Error fetching favorite places:', error)
+    }
+}
 
-// onMounted(() => {
-//     fetchUserDetails()
-//     fetchPaymentMethod()
-//     fetchFavoritePlaces()
-// })
+onMounted(() => {
+    fetchUserDetails()
+    fetchPaymentMethod()
+    fetchFavoritePlaces()
+})
 </script>
 
 <template>
     <div class="settings-container">
         <BackButton text="Torna Indietro" />
-        <p class="greeting mt-4">{{ greeting }}</p>
         <div class="form-group mt-4">
             <label for="name">Name:</label>
             <input type="text" id="name" v-model="name" readonly class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
@@ -155,18 +162,11 @@ const toggleTheme = () => {
                 <SunIcon v-if="theme === 'Chiaro'" class="h-5 w-5 text-yellow-500 transition duration-300 ease-in-out" />
                 <MoonIcon v-else class="h-5 w-5 text-gray-500 transition duration-300 ease-in-out" />
             </button>
-        </div>  
+        </div>
         <div class="form-group">
             <label for="search-warning">Avviso viaggi con valutazione bassa: </label>
             <input type="checkbox" id="sw" class="mr-2" />
-        </div>
-        <div class="form-group">
-            <label for="favorite-places">Luoghi Preferiti:</label>
-            <p v-if="favoritePlaces.length === 0" class="text-gray-500">Nessuna preferenza trovata</p>
-            <ul v-else>
-                <li v-for="place in favoritePlaces" :key="place">{{ place }}</li>
-            </ul>
-        </div>
+        </div>  
     </div>
 </template>
 
