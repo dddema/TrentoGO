@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import { SunIcon, MoonIcon } from '@heroicons/vue/24/solid'
 import BackButton from '@/components/BackButton.vue'
 import RoundButton from '@/components/RoundButton.vue'
 
-const name = ref('John Doe')
-const email = ref('john.doe@example.com')
+const name = ref('')
+const email = ref('')
 const password = ref('password123')
 const newPassword = ref('')
 const confirmPassword = ref('')
@@ -16,6 +17,7 @@ const passwordMismatch = ref(false)
 const passwordChanged = ref(false)
 const theme = ref('Chiaro')
 const favoritePlaces = ref([])
+const paymentMethod = ref(null)
 
 const togglePasswordVisibility = () => {
     passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password'
@@ -56,6 +58,40 @@ const updatePassword = () => {
 const toggleTheme = () => {
     theme.value = theme.value === 'Chiaro' ? 'Scuro' : 'Chiaro'
 }
+
+// const fetchUserDetails = async () => {
+//     try {
+//         const response = await axios.get('/api/user/your-user-id')
+//         name.value = response.data.name
+//         email.value = response.data.email
+//     } catch (error) {
+//         console.error('Error fetching user details:', error)
+//     }
+// }
+
+// const fetchPaymentMethod = async () => {
+//     try {
+//         const response = await axios.get('/api/payment-method/your-user-id')
+//         paymentMethod.value = response.data.paymentMethod
+//     } catch (error) {
+//         console.error('Error fetching payment method:', error)
+//     }
+// }
+
+// const fetchFavoritePlaces = async () => {
+//     try {
+//         const response = await axios.get('/api/favorite-places/your-user-id')
+//         favoritePlaces.value = undefined
+//     } catch (error) {
+//         console.error('Error fetching favorite places:', error)
+//     }
+// }
+
+// onMounted(() => {
+//     fetchUserDetails()
+//     fetchPaymentMethod()
+//     fetchFavoritePlaces()
+// })
 </script>
 
 <template>
@@ -109,11 +145,20 @@ const toggleTheme = () => {
             <input type="checkbox" id="bus" class="mr-2" />
         </div>
         <div class="form-group">
+            <label for="payment-method">Dati pagamento:</label>
+            <p v-if="!paymentMethod" class="text-gray-500">Nessun metodo di pagamento collegato</p>
+            <RoundButton v-else @buttonClick="addPaymentMethod" text="Aggiungi nuovo metodo di pagamento" color="trento-blue" textColor="trento-white" class="mt-2 small-button" />
+        </div>
+        <div class="form-group">
             <label for="theme">Tema:</label>
             <button @click="toggleTheme" class="flex items-center transition duration-300 ease-in-out">
                 <SunIcon v-if="theme === 'Chiaro'" class="h-5 w-5 text-yellow-500 transition duration-300 ease-in-out" />
                 <MoonIcon v-else class="h-5 w-5 text-gray-500 transition duration-300 ease-in-out" />
             </button>
+        </div>  
+        <div class="form-group">
+            <label for="search-warning">Avviso viaggi con valutazione bassa: </label>
+            <input type="checkbox" id="sw" class="mr-2" />
         </div>
         <div class="form-group">
             <label for="favorite-places">Luoghi Preferiti:</label>
