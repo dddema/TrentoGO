@@ -1,7 +1,7 @@
 <script setup>
 import router from '@/router'
 import axios from 'axios'
-import { compile, computed, ref, watch, onMounted } from 'vue'
+import { compile, computed, ref, watch, onMounted, useTemplateRef, onBeforeUnmount } from 'vue'
 
 const props = defineProps({
   position: {
@@ -10,9 +10,10 @@ const props = defineProps({
   }
 })
 
+const root = useTemplateRef('root')
+
 const query = ref('')
 const autocompleteResults = ref([])
-
 const focused = ref(false)
 
 const fetchData = async (newQuery) => {
@@ -73,18 +74,28 @@ watch(query, async (newQuery, oldQuery) => {
 })
 
 // query x pref utente, ritorna anche favourites places
-// 
 
-let isFavoritesOveflown = ref(Boolean)
+// const isFavoritesOveflown = ref(false)
+
+const windowClickHandler = (event) => {
+  if (!root.value.contains(event.target))
+    focused.value = false
+}
 
 onMounted(() => {
-  const element = document.querySelector('#favorites_slider');
-  isFavoritesOveflown = doesItOverflow(element);
-}) 
+  window.addEventListener('click', windowClickHandler)
 
-const doesItOverflow = (element) => {
-  return element.scrollWidth > element.clientWidth;
-}
+  // const element = document.querySelector('#favorites_slider')
+  // isFavoritesOveflown.value = doesItOverflow(element)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('click', windowClickHandler)
+})
+
+// const doesItOverflow = (element) => {
+//   return element.scrollWidth > element.clientWidth;
+// }
 
 const goToRoutes = (result) => {
   router.push(`/routes/${props.position.latitude},${props.position.longitude}/${result.place_id}`);
@@ -92,20 +103,21 @@ const goToRoutes = (result) => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center left-1/5 right-1/5 text-center fixed bottom-22 transition-bottom duration-300 has-focus:bottom-1/4 text-dark-gray">
-    <div class="w-2xl -mb-6 rounded-[1rem] pt-3 pb-9 border-1 border-gray-300 px-10 bg-white/30 backdrop-blur-md z-1" :class="{ hidden: !focused }">
-      <ul class="pb-4" >
-        <li @click="goToRoutes(result)" v-for="result in autocompleteResults" class="flex items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 py-2">
-          <div class="text-center flex flex-col items-center justify-center w-4 ml-5">
-            <img v-if="!result.types.includes('route')" src="../assets/icons/location.svg"/>
-            <img v-else src="../assets/icons/road.svg"/>
+  <div class="flex items-end justify-center">
+    <div ref="root" class="flex flex-col items-center text-center fixed transition-bottom duration-300 delay-75 text-dark-gray" :class="[focused ? 'bottom-50' : 'bottom-10']">
+      <div v-if="focused" class="w-2xl -mb-6 rounded-[1rem] pt-3 pb-9 border-1 border-gray-300 px-10 bg-white/30 backdrop-blur-md z-1">
+        <ul class="pb-4">
+          <li @click="goToRoutes(result)" v-for="result in autocompleteResults" class="flex items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 py-2">
+            <div class="text-center flex flex-col items-center justify-center w-4 ml-5">
+              <img v-if="!result.types.includes('route')" src="../assets/icons/location.svg"/>
+              <img v-else src="../assets/icons/road.svg"/>
 
-            <span v-if="result.distance_meters" class="text-xs">{{ (result.distance_meters/1000).toFixed(1) }}&nbsp;km</span>
-          </div>
-          <span class="text-md pl-8 truncate max-w-80">{{ `${result.terms[0].value}, `}}</span><span class="pl-1 text-gray-400 truncate" >{{ `${result.terms[1].value}` }}</span>
-        </li>
-      </ul>
-      <div :class="{ 'bg-red-500' : isFavoritesOveflown }" id="favorites_slider" class="flex flex-row text-xs overflow-visible items-center h-10 overflow-x-scroll no-scrollbar mask-blur scroll-px-150 justify-center">
+              <span v-if="result.distance_meters" class="text-xs">{{ (result.distance_meters/1000).toFixed(1) }}&nbsp;km</span>
+            </div>
+            <span class="text-md pl-8 truncate max-w-80">{{ `${result.terms[0].value}, `}}</span><span class="pl-1 text-gray-400 truncate" >{{ `${result.terms[1].value}` }}</span>
+          </li>
+        </ul>
+        <div id="favorites_slider" class="flex flex-row text-xs overflow-visible items-center h-10 overflow-x-scroll no-scrollbar mask-blur scroll-px-150 justify-center">
           <span class="bg-transparent w-20 text-transparent">spacer</span>
           <span class="bg-blue-500 shadow-md shadow-blue-500/50 shrink-0 px-2 py-1 rounded-full text-white flex flex-row">
             <img src="../assets/icons/home.svg"/>
@@ -116,19 +128,19 @@ const goToRoutes = (result) => {
             <span class="ml-1">Uni</span>
           </span>
           <span class="bg-transparent w-20 text-transparent">spacer</span>
-
         </div>
-    </div>
+      </div>
 
-    <div class="relative flex flex-row items-center w-74 py-2 px-3 z-10 rounded-xl shadow-md border-1 border-gray-200 bg-radial from-violet-200 to-slate-50 to-90%">
-      <img class="w-5 inline z-11" src="../assets/icons/search.svg"/>
-      <input
-        class="text-dark-gray pl-2 outline-0 w-full"
-        type="text"
-        placeholder="Dove vuoi andare?"
-        v-model="query"
-        @focusin="focused = true"
-      />
+      <div class="relative flex flex-row items-center w-74 py-2 px-3 z-10 rounded-xl shadow-md border-1 border-gray-200 bg-radial from-violet-200 to-slate-50 to-90%">
+        <img class="w-5 inline z-11" src="../assets/icons/search.svg"/>
+        <input
+          class="text-dark-gray pl-2 outline-0 w-full"
+          type="text"
+          placeholder="Dove vuoi andare?"
+          v-model="query"
+          @focusin="focused = true"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -141,9 +153,5 @@ const goToRoutes = (result) => {
   textarea::placeholder {
     color: #2c2c2c;
   }
-}
-
-.hidden {
-  display: none;
 }
 </style>
