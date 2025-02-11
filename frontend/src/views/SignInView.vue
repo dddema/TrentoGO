@@ -1,13 +1,14 @@
 <script setup>
-import BackButton from "@/components/BackButton.vue";
-import RoundButton from "@/components/RoundButton.vue";
-import GoogleIcon from "@/assets/icons/GoogleIcon.svg"
+import BackButton from "@/components/BackButton.vue"
+import RoundButton from "@/components/RoundButton.vue"
+import { signIn } from "@/lib/api";
+
 </script>
 
 <template>
   <div class="bg-red flex flex-col justify-start items-center p-4">
     <BackButton text="Torna Indietro" />
-    <img class="py-30 w-90" src="../assets/TrentoGoLogo.png" alt="">
+    <img class="py-30 w-90" src="../assets/icons/TrentoGoLogo.svg" alt="">
     
     <div class="h-full flex flex-col justify-end pb-5 items-center">
         <RoundButton @click="this.$router.push('/auth/signup');" text="Crea account" color="trento-blue/30" text-color="trento-blue" class="mb-5"/>

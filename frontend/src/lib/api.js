@@ -14,13 +14,11 @@ api.interceptors.request.use((config) => {
   return config
 }, (error) => Promise.reject(error))
 
-const checkErrorStatus = (error, knownCodes) => {
-  if (knownCodes.includes(error.response.status)) {
-    return { result: false, ...error.response.data }
-  } else {
-    return { result: false, message: 'Errore del server.' }
-  }
-}
+const checkErrorStatus = (error, knownCodes) => ({
+  result: false,
+  message: (knownCodes.includes(error.response.status) ?
+    error.response.data.message : 'Errore del server.')
+})
 
 /**
  * Logs in the user with the provided credentials.
@@ -73,7 +71,7 @@ export const logOut = async () => {
     return { result: true }
   } catch (error) {
     console.error(error.message)
-    return checkErrorStatus(error, [400])
+    return checkErrorStatus(error, [401])
   }
 }
 
@@ -102,5 +100,71 @@ export const signUp = async (email, password, fullName) => {
   } catch (error) {
     console.error(error.message)
     return checkErrorStatus(error, [409])
+  }
+}
+
+export const getUser = async () => {
+  try {
+    const response = await api.get('user/')
+
+    return { result: true, ...response.data }
+  } catch (error) {
+    console.error(error.message)
+    return checkErrorStatus(error, [401])
+  }
+}
+
+export const updatePreferences = async (theme, ratingWarning) => {
+  try {
+    const response = await api.patch('user/preferences', { theme, ratingWarning })
+
+    return { result: true, ...response.data }
+  } catch (error) {
+    console.error(error.message)
+    return checkErrorStatus(error, [401])
+  }
+}
+
+export const getCreditCardInfo = async () => {
+  try {
+    const response = await api.get('user/credit-card-info')
+
+    return { result: true, ...response.data }
+  } catch (error) {
+    console.error(error.message)
+    return checkErrorStatus(error, [401])
+  }
+}
+
+export const setCreditCardInfo = async (ownerName, ownerSurname, number, cvc, expireAt) => {
+  try {
+    const response = await api.put('user/credit-card-info', { ownerName, ownerSurname, number, cvc, expireAt })
+
+    return { result: true, ...response.data }
+  } catch (error) {
+    console.error(error.message)
+    return checkErrorStatus(error, [401])
+  }
+}
+
+export const addFavouritePlace = async (title, icon, color, lat, lng) => {
+  try {
+    const response = await api.post('user/favourites', { title, icon, color, lat, lng })
+
+    return { result: true, favourites: response.data }
+  } catch (error) {
+    console.error(error.message)
+    return checkErrorStatus(error, [401])
+  }
+}
+
+export const deleteFavouritePlace = async (id) => {
+  try {
+    const response = await api.delete(`user/favourites/${id}`)
+
+    return { result: true, favourites: response.data }
+  } catch (error) {
+    console.error(error.message)
+    return checkErrorStatus(error, [401])
   }
 }
