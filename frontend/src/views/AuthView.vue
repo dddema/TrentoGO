@@ -3,15 +3,12 @@ import BackButton from "@/components/BackButton.vue";
 import RoundButton from "@/components/RoundButton.vue";
 import { GoogleLogin } from "vue3-google-login";
 import axios from "axios";
+import { useRouter } from "vue-router";
 // import GoogleIcon from "@/assets/icons/GoogleIcon.svg";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
-const signUp = () => {
-}
-
-const logIn = () => {
-}
+const router = useRouter()
 
 const googleSignIn = async (response) => {
   try {
@@ -57,8 +54,8 @@ const GsiButtonConfiguration = {
         <hr class="flex-grow border-t border-light-gray">
       </div>
       
-      <RoundButton @button-click="signUp" text="Crea un Account"/>
-      <RoundButton @button-click="logIn" text="Accedi o Continua come Ospite" color="bg-trento-blue/30" text-color="text-trento-blue" hover-color="hover:bg-dark-trento-blue/40" class="mb-5"/>
+      <RoundButton @button-click="router.push({ name: 'signup' })" text="Crea un Account"/>
+      <RoundButton @button-click="router.push({ name: 'signin' })" text="Accedi o Continua come Ospite" color="bg-trento-blue/30" text-color="text-trento-blue" hover-color="hover:bg-dark-trento-blue/40" class="mb-5"/>
       <span class="text-dark-gray">Continuando accetti i nostri <span class="text-trento-blue underline font-semibold">Terms of service.</span></span>
     </div>
   </div>
