@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import { SunIcon, MoonIcon } from '@heroicons/vue/24/solid'
+import BackButton from '@/components/BackButton.vue'
+import RoundButton from '@/components/RoundButton.vue'
 
 const name = ref('John Doe')
 const email = ref('john.doe@example.com')
@@ -58,8 +60,9 @@ const toggleTheme = () => {
 
 <template>
     <div class="settings-container">
-        <p class="greeting">{{ greeting }}</p>
-        <div class="form-group">
+        <BackButton text="Torna Indietro" />
+        <p class="greeting mt-4">{{ greeting }}</p>
+        <div class="form-group mt-4">
             <label for="name">Name:</label>
             <input type="text" id="name" v-model="name" readonly class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
         </div>
@@ -71,26 +74,26 @@ const toggleTheme = () => {
             <label for="password">Password:</label>
             <div class="flex items-center">
                 <input :type="passwordFieldType" id="password" v-model="password" readonly class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
-                <button @click="togglePasswordVisibility" class="bg-blue-500 text-white px-4 py-2 rounded-md ml-2">Show Password</button>
+                <RoundButton @buttonClick="togglePasswordVisibility" text="Show Password" color="trento-blue" textColor="trento-white" class="ml-2 small-button" />
             </div>
         </div>
         <div class="form-group">
             <label for="new-password">New Password:</label>
             <div class="flex items-center">
                 <input :type="newPasswordFieldType" id="new-password" v-model="newPassword" @input="checkPasswordMatch" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
-                <button @click="toggleNewPasswordVisibility" class="bg-blue-500 text-white px-4 py-2 rounded-md ml-2">Show Password</button>
+                <RoundButton @buttonClick="toggleNewPasswordVisibility" text="Show Password" color="trento-blue" textColor="trento-white" class="ml-2 small-button" />
             </div>
         </div>
         <div class="form-group">
             <label for="confirm-password">Confirm Password:</label>
             <div class="flex items-center">
                 <input :type="confirmPasswordFieldType" id="confirm-password" v-model="confirmPassword" @input="checkPasswordMatch" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
-                <button @click="toggleConfirmPasswordVisibility" class="bg-blue-500 text-white px-4 py-2 rounded-md ml-2">Show Password</button>
+                <RoundButton @buttonClick="toggleConfirmPasswordVisibility" text="Show Password" color="trento-blue" textColor="trento-white" class="ml-2 small-button" />
             </div>
             <p v-if="passwordMismatch" class="error-message">Le password non coincidono</p>
         </div>
         <div class="form-group">
-            <button @click="updatePassword" class="bg-green-500 text-white px-4 py-2 rounded-md mt-2">Update Password</button>
+            <RoundButton @buttonClick="updatePassword" text="Update Password" color="gray-300" textColor="black" class="mt-2 small-button" />
             <p v-if="passwordChanged" class="success-message">Password changed successfully</p>
         </div>
         <div class="form-group">
@@ -158,5 +161,10 @@ button {
 .success-message {
     color: green;
     margin-top: 5px;
+}
+
+.small-button {
+    padding: 4px 8px;
+    font-size: 0.875rem;
 }
 </style>
