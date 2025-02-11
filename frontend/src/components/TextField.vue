@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, defineModel } from 'vue';
 
 const props = defineProps({
   type: {
@@ -8,39 +8,38 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: " "
+    default: ' '
   },
-  callBackFunction: {
-    type: Function,
-    required: true,
+  validationFn: {
+    type: Function
   },
 })
 
-const isValidField = ref(true);
-const isEmptyField = ref(true);
+const text = defineModel('text');
+const isValid = defineModel('isValid', { type: Boolean, default: true });
 
-function checkValidity(event) {
-  const target = event.target;
-  isEmptyField.value = target.value === '';
-  isValidField.value = props.callBackFunction(target.value);
-  console.log(isEmptyField.value);
-  console.log(isValidField.value);
+const isEmpty = ref(true);
+
+if (props.validationFn) {
+  watch(text, (newText, oldText) => {
+    isEmpty.value = newText === '';
+    isValid.value = props.validationFn(newText);
+  });
 }
-
 </script>
 
 <template>
   <div>
-    <input 
+    <input
+    v-model="text"
     :type="props.type" 
     :placeholder="props.placeholder"
     class="border rounded-xl p-2 m-2 w-80 text-center placeholder-dark-gray/30" 
     :class="{
-      'border-light-gray': isEmptyField,
-      'border-green-500': isValidField && !isEmptyField,
-      'border-red-500': !isValidField
+      'border-light-gray': isEmpty,
+      'border-green-500': isValid && !isEmpty,
+      'border-red-500': !isValid
     }" 
-    @input="checkValidity"
   />
   </div>
 </template>
