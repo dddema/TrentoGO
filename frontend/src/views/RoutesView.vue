@@ -60,35 +60,89 @@ console.log(start.value.latitude, start.value.longitude, arrival.value.latitude,
 // sommare distanze e tempi
 // mostrare risultati
 
-const fetchData = async () => {
-  try {
-    const url = 'https://maps.googleapis.com/maps/api/distancematrix/json'
-    const modes = ['transit', 'bicycling', 'walking'];
+// const fetchData = async () => {
+//   try {
+//     const url = 'https://maps.googleapis.com/maps/api/distancematrix/json'
+//     const modes = ['transit', 'bicycling', 'walking'];
 
-    for (const mode of modes) {
-      const response = await axios.get(url, {
-        params: {
-          destinations: `place_id:${arrival.value}`,
-          origins: `${start.value.latitude},${start.value.longitude}`,
-          units: 'metric',
-          language: 'it',
-          mode: mode,
-          key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-          ...(mode === 'transit' && { departure_time: 'now', transit_routing_preference: 'fewer_transfers' })
-        }
+//     for (const mode of modes) {
+//       const response = await axios.get(url, {
+//         params: {
+//           destinations: `place_id:${arrival.value}`,
+//           origins: `${start.value.latitude},${start.value.longitude}`,
+//           units: 'metric',
+//           language: 'it',
+//           mode: mode,
+//           key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+//           ...(mode === 'transit' && { departure_time: 'now', transit_routing_preference: 'fewer_transfers' })
+//         }
+//       });
+//       console.log(response);
+//       if (response.status === 200)
+//         transportResults.value.push(...response.data.rows);
+//       else
+//         console.error("Google maps API Error: " + response.data.error_message);
+//     }
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+let response;
+
+let bus_route_info = [];
+
+const fetchRouteDetails = async () => {
+  try {
+    const url = 'https://maps.googleapis.com/maps/api/directions/json';
+    response = await axios.get(url, {
+      params: {
+        origin: `${start.value.latitude},${start.value.longitude}`,
+        destination: `place_id:${arrival.value}`,
+        mode: 'transit',
+        language: 'it',
+        transit_routing_preference: 'fewer_transfers',
+        key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+      }
+    });
+
+    console.log(response);
+
+    if (response.status === 200) {
+      const route = response.data.routes[0];
+      const legs = route.legs[0];
+      const steps = legs.steps;
+
+      const totalTime = legs.duration.text;
+      const walkingSteps = steps.filter(step => step.travel_mode === 'WALKING');
+      const transitSteps = steps.filter(step => step.travel_mode === 'TRANSIT');
+
+      const timeAtFoot = walkingSteps.reduce((acc, step) => acc + step.duration.value, 0);
+      const busStops = transitSteps.map(step => ({
+        departure_stop: step.transit_details.departure_stop.name,
+        arrival_stop: step.transit_details.arrival_stop.name,
+        line: step.transit_details.line.short_name
+      }));
+
+      bus_route_info.push({
+        totalTime,
+        timeAtFoot,
+        busStops
       });
-      console.log(response);
-      if (response.status === 200)
-        transportResults.value.push(...response.data.rows);
-      else
-        console.error("Google maps API Error: " + response.data.error_message);
+
+      console.log('Total Time:', totalTime);
+      console.log('Time at Foot:', timeAtFoot);
+      console.log('Bus Stops:', busStops);
+    } else {
+      console.error("Google maps API Error: " + response.data.error_message);
     }
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-fetchData().then(() => console.log(transportResults.value))
+// fetchData().then(() => console.log(transportResults.value))
+fetchRouteDetails().then(() => console.log('bus_route_info:', bus_route_info));
 
 </script>
 
@@ -103,6 +157,7 @@ fetchData().then(() => console.log(transportResults.value))
         <NonCheckedTextField class="mb-3" type="text" placeholder="La tua posizione" placeholder-color="placeholder-trento-white" color="bg-dark-accent/40" border-color="border-transparent" text-color="text-trento-white" hover-color="hover:bg-accent"/>
         <NonCheckedTextField type="text" placeholder="Piazza Duomo, Trento" placeholder-color="placeholder-trento-white" color="bg-dark-accent/40" border-color="border-transparent" text-color="text-trento-white" hover-color="hover:bg-accent"/>
       </div>
+      <img src="../assets/icons/TrentoGoCircle.svg" class="fixed w-45 -mt-32 -right-15 opacity-20"/>
     </div>
 
     <!-- filters -->
@@ -125,35 +180,13 @@ fetchData().then(() => console.log(transportResults.value))
           
           <div class="flex flex-col items-left justify-center p-4 pl-8">
             <div class="font-medium text-dark-gray text-lg">
-                <span class="text-trento-blue pr-1">Autobus</span><span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full place-self-center"/>15 min<span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full" />1€              
+                <span class="text-trento-blue pr-1">Autobus</span><span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full place-self-center"/>{{ bus_route_info[0].totalTime }}<span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full" />1€              
             </div>
             <div class="flex flex-row">
-              <span class="w-5 h-5 pt-0.5 mr-1 bg-amber-300 rounded-md text-center font-medium text-white flex items-center justify-center place-self-center text-md">5</span>Piazza Dante <img class="mx-2" src="../assets/icons/walking.svg"/> 5 min a piedi</div>
+                <span class="w-5 h-5 pt-0.5 mr-1 bg-amber-300 rounded-md text-center font-medium text-white flex items-center justify-center place-self-center text-md">5</span>Piazza Dante <img class="mx-2" src="../assets/icons/walking.svg"/> {{ Math.floor(bus_route_info[0].timeAtFoot / 60) }} min a piedi</div>
           </div>
         </li>
-        <li class="cursor-pointer flex flex-row items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 px-3">
-          <img class="w-12" src="../assets/icons/directions_bus.svg"/>
-          
-          <div class="flex flex-col items-left justify-center p-4 pl-8">
-            <div class="font-medium text-dark-gray text-lg">
-                <span class="text-trento-blue pr-1">Autobus</span><span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full place-self-center"/>15 min<span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full" />1€              
-            </div>
-            <div class="flex flex-row">
-              <span class="w-5 h-5 pt-0.5 mr-1 bg-amber-300 rounded-md text-center font-medium text-white flex items-center justify-center place-self-center text-md">5</span>Piazza Dante <img class="mx-2" src="../assets/icons/walking.svg"/> 5 min a piedi</div>
-          </div>
-        </li>
-        <li class="cursor-pointer flex flex-row items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 px-3">
-          <img class="w-12" src="../assets/icons/directions_bus.svg"/>
-          
-          <div class="flex flex-col items-left justify-center p-4 pl-8">
-            <div class="font-medium text-dark-gray text-lg">
-                <span class="text-trento-blue pr-1">Autobus</span><span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full place-self-center"/>15 min<span class="inline-block w-2 h-2 mx-1 mb-0.5 bg-gray-300 rounded-full" />1€              
-            </div>
-            <div class="flex flex-row">
-              <span class="w-5 h-5 pt-0.5 mr-1 bg-amber-300 rounded-md text-center font-medium text-white flex items-center justify-center place-self-center text-md">5</span>Piazza Dante <img class="mx-2" src="../assets/icons/walking.svg"/> 5 min a piedi</div>
-          </div>
-        </li>
-
+        
       </ul>
     </div>
       

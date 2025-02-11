@@ -106,11 +106,11 @@ const mapStyles = [
 const route = useRoute()
 const isHome = computed(() => route.path == '/')
 
-
-const position = ref(trentoCoords.value)
+const position = ref({ latitude: 46.066630516969994, longitude: 11.136310379875919 })
 
 navigator.geolocation.getCurrentPosition(
   (current_position) => {
+    console.log(current_position)
     position.value = current_position.coords
   },
   (error) => {
