@@ -24,6 +24,16 @@ const googleSignIn = async (response) => {
     console.error(error)
   }
 }
+
+const GsiButtonConfiguration = {
+  type: 'standard',
+  theme: 'filled_blue',
+  size: 'large',
+  text: 'signin_with',
+  shape: 'pill',
+  width: 350,
+  logo_alignment: 'left'
+}
 </script>
 
 <template>
@@ -33,7 +43,13 @@ const googleSignIn = async (response) => {
     
     <div class="h-full flex flex-col justify-end pb-5 items-center">
       <!-- <RoundButton @button-click="googleSignIn" text="Continua con Google" color="bg-trento-white" text-color="text-dark-gray" text-weight="font-medium" hover-color="hover:bg-dark-gray/5" :icon="GoogleIcon"/> -->
-      <GoogleLogin :client-id="GOOGLE_CLIENT_ID" :callback="googleSignIn" prompt auto-login  />
+      <GoogleLogin 
+        :client-id="GOOGLE_CLIENT_ID" 
+        :callback="googleSignIn" 
+        prompt 
+        auto-login
+        :button-config="GsiButtonConfiguration"
+      />
       
       <div class="flex items-center w-full my-5">
         <hr class="flex-grow border-t border-light-gray">
