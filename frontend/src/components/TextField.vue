@@ -16,7 +16,7 @@ const props = defineProps({
 })
 
 const text = defineModel('text');
-const isValid = defineModel('isValid', { type: Boolean, default: true });
+const isValid = defineModel('isValid', { type: Boolean, default: false });
 
 const isEmpty = ref(true);
 
@@ -38,7 +38,7 @@ if (props.validationFn) {
     :class="{
       'border-light-gray': isEmpty,
       'border-green-500': isValid && !isEmpty,
-      'border-red-500': !isValid
+      'border-red-500': !isValid && !isEmpty
     }" 
   />
   </div>
