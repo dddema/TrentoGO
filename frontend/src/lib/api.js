@@ -42,7 +42,7 @@ export const signIn = async (email, password) => {
     const response = await api.post('auth/login', { email, password })
     localStorage.setItem('authtoken', response.data.token)
 
-    return { result: true, ...response.data }
+    return { result: true, data: response.data }
   } catch (error) {
     console.error(error.message)
     return checkErrorStatus(error, [403])
@@ -96,7 +96,7 @@ export const signUp = async (email, password, fullName) => {
   try {
     const response = await api.post('auth/signup', { email, password, fullName })
 
-    return { result: true, ...response.data }
+    return { result: true, data: response.data }
   } catch (error) {
     console.error(error.message)
     return checkErrorStatus(error, [409])
@@ -121,7 +121,7 @@ export const getUser = async () => {
   try {
     const response = await api.get('user/')
 
-    return { result: true, ...response.data }
+    return { result: true, data: response.data }
   } catch (error) {
     console.error(error.message)
     return checkErrorStatus(error, [401])
@@ -148,7 +148,7 @@ export const updatePreferences = async (theme, ratingWarning) => {
   try {
     const response = await api.patch('user/preferences', { theme, ratingWarning })
 
-    return { result: true, ...response.data }
+    return { result: true, data: response.data }
   } catch (error) {
     console.error(error.message)
     return checkErrorStatus(error, [401])
@@ -173,7 +173,7 @@ export const getCreditCardInfo = async () => {
   try {
     const response = await api.get('user/credit-card-info')
 
-    return { result: true, ...response.data }
+    return { result: true, data: response.data }
   } catch (error) {
     console.error(error.message)
     return checkErrorStatus(error, [401])
@@ -203,7 +203,7 @@ export const setCreditCardInfo = async (ownerName, ownerSurname, number, cvc, ex
   try {
     const response = await api.put('user/credit-card-info', { ownerName, ownerSurname, number, cvc, expireAt })
 
-    return { result: true, ...response.data }
+    return { result: true, data: response.data }
   } catch (error) {
     console.error(error.message)
     return checkErrorStatus(error, [401])
@@ -233,7 +233,7 @@ export const addFavouritePlace = async (title, icon, color, lat, lng) => {
   try {
     const response = await api.post('user/favourites', { title, icon, color, lat, lng })
 
-    return { result: true, favourites: response.data }
+    return { result: true, data: response.data }
   } catch (error) {
     console.error(error.message)
     return checkErrorStatus(error, [401])
@@ -259,7 +259,7 @@ export const deleteFavouritePlace = async (id) => {
   try {
     const response = await api.delete(`user/favourites/${id}`)
 
-    return { result: true, favourites: response.data }
+    return { result: true, data: response.data }
   } catch (error) {
     console.error(error.message)
     return checkErrorStatus(error, [401])
@@ -286,7 +286,7 @@ export const getNearestBikeStall = async (lat, lng) => {
   try {
     const response = await api.get('transport/near-bike-stall', { params: { lat, lng } })
 
-    return { result: true, ...response.data }
+    return { result: true, data: response.data }
   } catch (error) {
     console.error(error.message)
     return checkErrorStatus(error, [401])
@@ -313,7 +313,7 @@ export const getNearestScooter = async (lat, lng) => {
   try {
     const response = await api.get('transport/near-scooter', { params: { lat, lng } })
 
-    return { result: true, ...response.data }
+    return { result: true, data: response.data }
   } catch (error) {
     console.error(error.message)
     return checkErrorStatus(error, [401])
