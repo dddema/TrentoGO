@@ -106,11 +106,11 @@ const mapStyles = [
 const route = useRoute()
 const isHome = computed(() => route.path == '/')
 
-
-const position = ref(trentoCoords.value)
+const position = ref({ latitude: 46.066630516969994, longitude: 11.136310379875919 })
 
 navigator.geolocation.getCurrentPosition(
   (current_position) => {
+    console.log(current_position)
     position.value = current_position.coords
   },
   (error) => {
@@ -140,7 +140,7 @@ navigator.geolocation.getCurrentPosition(
           :styles="mapStyles"
         ></GoogleMap>
       </div>
-      <RouterView class="shadow-xl z-1 overflow-auto w-110 h-full p-5 bg-trento-white" />
+      <RouterView class="shadow-xl z-1 overflow-auto w-110 h-full bg-trento-white" />
     </div>
 
     <SearchBar v-if="isHome" :position="position"/>
