@@ -1,4 +1,7 @@
 <script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
 import BackButton from "@/components/BackButton.vue";
 import RoundButton from "@/components/RoundButton.vue";
 import TextField from "@/components/TextField.vue";
@@ -31,6 +34,7 @@ function sendSignIn() {
 </script>
 
 <template>
+  
   <div class="bg-red flex flex-col justify-start items-center p-4">
     <BackButton text="Torna Indietro" />
     <img class="py-30 w-90" src="../assets/icons/TrentoGoLogo.svg" alt="">
