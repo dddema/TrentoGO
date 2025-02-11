@@ -117,7 +117,6 @@ navigator.geolocation.getCurrentPosition(
     console.error(error)
   }
 );
-
 </script>
 
 <template>
