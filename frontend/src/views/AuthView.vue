@@ -1,10 +1,8 @@
 <script setup>
 import BackButton from "@/components/BackButton.vue";
 import RoundButton from "@/components/RoundButton.vue";
-import GoogleIcon from "@/assets/icons/GoogleIcon.svg";
-
-const googleSignIn = () => {
-}
+import { GoogleLogin } from "vue3-google-login";
+// import GoogleIcon from "@/assets/icons/GoogleIcon.svg";
 
 const signUp = () => {
 }
@@ -12,6 +10,17 @@ const signUp = () => {
 const logIn = () => {
 }
 
+const googleSignIn = async (response) => {
+  try {
+    const url = 'http://localhost:3000/auth/google'
+    const res = await axios.post(url, {
+      idToken: response.credential
+    })
+    console.log(res)
+  } catch (error) {
+    console.error(error)
+  }
+}
 </script>
 
 <template>
@@ -20,7 +29,8 @@ const logIn = () => {
     <img class="py-30 w-90" src="../assets/icons/TrentoGoLogo.svg" alt="">
     
     <div class="h-full flex flex-col justify-end pb-5 items-center">
-      <RoundButton @button-click="googleSignIn" text="Continua con Google" color="bg-trento-white" text-color="text-dark-gray" text-weight="font-medium" hover-color="hover:bg-dark-gray/5" :icon="GoogleIcon"/>
+      <!-- <RoundButton @button-click="googleSignIn" text="Continua con Google" color="bg-trento-white" text-color="text-dark-gray" text-weight="font-medium" hover-color="hover:bg-dark-gray/5" :icon="GoogleIcon"/> -->
+      <GoogleLogin :callback="googleSignIn" prompt auto-login />
       
       <div class="flex items-center w-full my-5">
         <hr class="flex-grow border-t border-light-gray">
