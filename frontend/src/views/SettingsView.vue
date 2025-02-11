@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import { SunIcon, MoonIcon } from '@heroicons/vue/24/solid'
 import BackButton from '@/components/BackButton.vue'
 import RoundButton from '@/components/RoundButton.vue'
 
@@ -152,8 +151,8 @@ const toggleTheme = () => {
         <div class="form-group">
             <label for="theme">Tema:</label>
             <button @click="toggleTheme" class="flex items-center transition duration-300 ease-in-out">
-                <SunIcon v-if="theme === 'Chiaro'" class="h-5 w-5 text-yellow-500 transition duration-300 ease-in-out" />
-                <MoonIcon v-else class="h-5 w-5 text-gray-500 transition duration-300 ease-in-out" />
+                <!-- <SunIcon v-if="theme === 'Chiaro'" class="h-5 w-5 text-yellow-500 transition duration-300 ease-in-out" />
+                <MoonIcon v-else class="h-5 w-5 text-gray-500 transition duration-300 ease-in-out" /> -->
             </button>
         </div>  
         <div class="form-group">
