@@ -5,6 +5,7 @@ import SignInView from '@/views/SignInView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
 import RoutesView from '@/views/RoutesView.vue'
+import SettingsView from '@/views/SettingsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,7 @@ const router = createRouter({
         {
           path: 'settings',
           name: 'settings',
+          component: SettingsView,
         },
         {
           path: 'routes/:start/:arrival',
