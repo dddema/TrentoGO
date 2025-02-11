@@ -64,7 +64,6 @@ async function sendSignIn() {
         class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" 
         :class="{'border-red-500': !isValidEmail}" 
         v-model="email"
-        @input="validateEmail"
       />
       <input 
         type="password" 
@@ -72,7 +71,6 @@ async function sendSignIn() {
         class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" 
         :class="{'border-red-500': !isValidPassword}" 
         v-model="password"
-        @input="validatePassword"
       />
 
       <RoundButton @click="sendSignIn" text="Crea account" color="trento-blue/30" text-color="trento-blue" class="mb-5"/>

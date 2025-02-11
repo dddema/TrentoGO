@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { SunIcon, MoonIcon } from '@heroicons/vue/24/solid'
 
 const name = ref('John Doe')
 const email = ref('john.doe@example.com')
@@ -10,7 +11,9 @@ const passwordFieldType = ref('password')
 const newPasswordFieldType = ref('password')
 const confirmPasswordFieldType = ref('password')
 const passwordMismatch = ref(false)
+const passwordChanged = ref(false)
 const theme = ref('Chiaro')
+const favoritePlaces = ref([])
 
 const togglePasswordVisibility = () => {
     passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password'
@@ -26,6 +29,26 @@ const toggleConfirmPasswordVisibility = () => {
 
 const checkPasswordMatch = () => {
     passwordMismatch.value = newPassword.value !== confirmPassword.value
+    if (!passwordMismatch.value) {
+        passwordChanged.value = false
+    }
+}
+
+const updatePassword = () => {
+    if (!passwordMismatch.value && newPassword.value.length >= 8 && confirmPassword.value.length >= 8) {
+        // Simulate a successful password update
+        passwordChanged.value = true
+        // Here you would typically send a request to your backend to update the password
+        // axios.post('/update-password', { newPassword: newPassword.value })
+        //     .then(response => {
+        //         passwordChanged.value = true
+        //     })
+        //     .catch(error => {
+        //         console.error('Error updating password:', error)
+        //     })
+    } else {
+        passwordChanged.value = false
+    }
 }
 
 const toggleTheme = () => {
@@ -46,19 +69,29 @@ const toggleTheme = () => {
         </div>
         <div class="form-group">
             <label for="password">Password:</label>
-            <input :type="passwordFieldType" id="password" v-model="password" readonly class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
-            <button @click="togglePasswordVisibility" class="bg-blue-500 text-white px-4 py-2 rounded-md">Show Password</button>
+            <div class="flex items-center">
+                <input :type="passwordFieldType" id="password" v-model="password" readonly class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+                <button @click="togglePasswordVisibility" class="bg-blue-500 text-white px-4 py-2 rounded-md ml-2">Show Password</button>
+            </div>
         </div>
         <div class="form-group">
             <label for="new-password">New Password:</label>
-            <input :type="newPasswordFieldType" id="new-password" v-model="newPassword" @input="checkPasswordMatch" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
-            <button @click="toggleNewPasswordVisibility" class="bg-blue-500 text-white px-4 py-2 rounded-md">Show Password</button>
+            <div class="flex items-center">
+                <input :type="newPasswordFieldType" id="new-password" v-model="newPassword" @input="checkPasswordMatch" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+                <button @click="toggleNewPasswordVisibility" class="bg-blue-500 text-white px-4 py-2 rounded-md ml-2">Show Password</button>
+            </div>
         </div>
         <div class="form-group">
             <label for="confirm-password">Confirm Password:</label>
-            <input :type="confirmPasswordFieldType" id="confirm-password" v-model="confirmPassword" @input="checkPasswordMatch" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
-            <button @click="toggleConfirmPasswordVisibility" class="bg-blue-500 text-white px-4 py-2 rounded-md">Show Password</button>
+            <div class="flex items-center">
+                <input :type="confirmPasswordFieldType" id="confirm-password" v-model="confirmPassword" @input="checkPasswordMatch" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+                <button @click="toggleConfirmPasswordVisibility" class="bg-blue-500 text-white px-4 py-2 rounded-md ml-2">Show Password</button>
+            </div>
             <p v-if="passwordMismatch" class="error-message">Le password non coincidono</p>
+        </div>
+        <div class="form-group">
+            <button @click="updatePassword" class="bg-green-500 text-white px-4 py-2 rounded-md mt-2">Update Password</button>
+            <p v-if="passwordChanged" class="success-message">Password changed successfully</p>
         </div>
         <div class="form-group">
             <label for="bici">Sottoscrizione Biciclette:</label>
@@ -74,7 +107,17 @@ const toggleTheme = () => {
         </div>
         <div class="form-group">
             <label for="theme">Tema:</label>
-            <button @click="toggleTheme" class="bg-blue-500 text-white px-4 py-2 rounded-md">{{ theme }}</button>
+            <button @click="toggleTheme" class="flex items-center transition duration-300 ease-in-out">
+                <SunIcon v-if="theme === 'Chiaro'" class="h-5 w-5 text-yellow-500 transition duration-300 ease-in-out" />
+                <MoonIcon v-else class="h-5 w-5 text-gray-500 transition duration-300 ease-in-out" />
+            </button>
+        </div>
+        <div class="form-group">
+            <label for="favorite-places">Luoghi Preferiti:</label>
+            <p v-if="favoritePlaces.length === 0" class="text-gray-500">Nessuna preferenza trovata</p>
+            <ul v-else>
+                <li v-for="place in favoritePlaces" :key="place">{{ place }}</li>
+            </ul>
         </div>
     </div>
 </template>
@@ -109,6 +152,11 @@ button {
 
 .error-message {
     color: red;
+    margin-top: 5px;
+}
+
+.success-message {
+    color: green;
     margin-top: 5px;
 }
 </style>
