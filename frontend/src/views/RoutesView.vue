@@ -49,10 +49,7 @@ const start = ref({
   latitude: parseFloat(route.params.start.split(',')[0]),
   longitude: parseFloat(route.params.start.split(',')[1])
 });
-const arrival = ref({
-  latitude: parseFloat(route.params.arrival.split(',')[0]),
-  longitude: parseFloat(route.params.arrival.split(',')[1])
-});
+const arrival = ref(route.params.arrival);
 
 console.log(start.value.latitude, start.value.longitude, arrival.value.latitude, arrival.value.longitude)
 
@@ -63,7 +60,6 @@ console.log(start.value.latitude, start.value.longitude, arrival.value.latitude,
 // sommare distanze e tempi
 // mostrare risultati
 
-
 const fetchData = async () => {
   try {
     const url = 'https://maps.googleapis.com/maps/api/distancematrix/json'
@@ -72,8 +68,8 @@ const fetchData = async () => {
     for (const mode of modes) {
       const response = await axios.get(url, {
         params: {
-          destinations: `${start.value.latitude},${start.value.longitude}`,
-          origins: `${arrival.value.latitude},${arrival.value.longitude}`,
+          destinations: `place_id:${arrival.value}`,
+          origins: `${start.value.latitude},${start.value.longitude}`,
           units: 'metric',
           language: 'it',
           mode: mode,
