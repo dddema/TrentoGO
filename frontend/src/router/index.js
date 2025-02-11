@@ -4,7 +4,6 @@ import RoutesView from '@/views/RoutesView.vue'
 import AuthView from '@/views/AuthView.vue'
 import SignInView from '@/views/SignInView.vue'
 import SignUpView from '@/views/SignUpView.vue'
-import RoutesView from '@/views/RoutesView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 
 const router = createRouter({
