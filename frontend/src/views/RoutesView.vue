@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import BackButton from "@/components/BackButton.vue";
 import RoundButton from "@/components/RoundButton.vue";
 import NonCheckedTextField from '@/components/NonCheckedTextField.vue';
@@ -10,6 +10,7 @@ import axios from 'axios';
 import { getNearestBikeStall, getNearestScooter } from '@/lib/api.js';
 
 const route = useRoute();
+// const router = useRouter();
 const start = ref({
   latitude: parseFloat(route.params.start.split(',')[0]),
   longitude: parseFloat(route.params.start.split(',')[1])
@@ -231,9 +232,10 @@ fetchTransport().then(() => {
   });
 });
 
-// TODO!!
+const router = useRouter()
 const goToRoutes = (result) => {
-  // router.push(`/routes/${props.position.latitude},${props.position.longitude}/${result.place_id}`);
+  console.log('goToRoutes:', result);
+  router.push(route.fullPath + '/0');
 }
 
 </script>

@@ -165,7 +165,7 @@ const goToSettings = () => {
         :position="position"
         :favourites="userPreferences.favourites || []"
       />
-    <CogIcon v-if="isHome" @click="goToSettings" class="settings-icon" />
+    <CogIcon v-if="isHome" @click="goToSettings" class="settings-icon w-10" />
   </main>
 </template>
 
@@ -174,8 +174,6 @@ const goToSettings = () => {
   position: fixed;
   top: 16px;
   right: 16px;
-  width: 24px;
-  height: 24px;
   color: #4A5568; /* Tailwind's gray-700 */
   cursor: pointer;
 }
