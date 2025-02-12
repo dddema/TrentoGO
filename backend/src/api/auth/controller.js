@@ -9,7 +9,7 @@ export const login = async (req, res) => {
 
   if (user) {
     const userPayload = { id: user.id, email: user.email }
-    const token = jwt.sign(userPayload, process.env.JWT_SECRET, { expiresIn: '5m' })
+    const token = jwt.sign(userPayload, process.env.JWT_SECRET, { expiresIn: '4h' })
 
     res.status(200).json({ token })
   } else {
