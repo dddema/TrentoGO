@@ -22,9 +22,17 @@ const userPreferencesSchema = new mongoose.Schema({
     enum: ['light', 'dark', 'auto'],
     default: 'auto'
   },
-  ratingWarning: {
+  bikeSubscription: {
     type: Boolean,
-    default: true
+    default: false
+  },
+  scooterSubscription: {
+    type: Boolean,
+    default: false
+  },
+  busSubscription: {
+    type: Boolean,
+    default: false
   },
   favourites: [favouritePlaceSchema]
 })
