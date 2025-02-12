@@ -37,7 +37,7 @@ const submit = async () => {
     const response = await signUp(email.value, password.value, fullName.value);
 
     if (response.result) {
-      router.push({ name: 'auth/signin' });
+      router.push({ name: 'signin' });
     } else {
       errorMessage.value = response.message;
     }

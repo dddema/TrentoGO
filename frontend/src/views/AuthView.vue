@@ -12,11 +12,14 @@ const router = useRouter()
 
 const googleSignIn = async (response) => {
   try {
-    const url = 'http://trentogo.onrender.com/auth/google'
-    const res = await axios.post(url, {
-      idToken: response.credential
-    })
-    console.log(res)
+    if (response.credential!=undefined) {
+      const url = 'http://trentogo.onrender.com/auth/google'
+       const res = await axios.post(url, {
+          idToken: response.credential
+        })
+      localStorage.setItem('authtoken', res.data.token)
+      router.push('/');
+    }
   } catch (error) {
     console.error(error)
   }
@@ -41,7 +44,7 @@ const GsiButtonConfiguration = {
     <div class="h-full flex flex-col justify-end pb-5 items-center">
       <!-- <RoundButton @button-click="googleSignIn" text="Continua con Google" color="bg-trento-white" text-color="text-dark-gray" text-weight="font-medium" hover-color="hover:bg-dark-gray/5" :icon="GoogleIcon"/> -->
       <GoogleLogin 
-        :client-id="GOOGLE_CLIENT_ID" 
+        :client-id=GOOGLE_CLIENT_ID
         :callback="googleSignIn" 
         prompt 
         auto-login

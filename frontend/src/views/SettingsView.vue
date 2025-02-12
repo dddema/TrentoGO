@@ -7,7 +7,6 @@ import { getUser, getCreditCardInfo } from '@/lib/api'
 
 const name = ref('')
 const email = ref('')
-const password = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
 const passwordFieldType = ref('password')
@@ -18,6 +17,7 @@ const passwordChanged = ref(false)
 const theme = ref('Chiaro')
 const favoritePlaces = ref([])
 const paymentMethod = ref(null)
+const hasGoogle = ref(false)
 
 const togglePasswordVisibility = () => {
     passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password'
@@ -32,11 +32,14 @@ const toggleConfirmPasswordVisibility = () => {
 }
 
 const checkPasswordMatch = () => {
-    passwordMismatch.value = newPassword.value !== confirmPassword.value
+    if (newPassword.value.length > 0 && confirmPassword.value.length > 0) {
+        passwordMismatch.value = newPassword.value !== confirmPassword.value
     if (!passwordMismatch.value) {
         passwordChanged.value = false
     }
 }
+    }
+    
 
 const updatePassword = () => {
     if (!passwordMismatch.value && newPassword.value.length >= 8 && confirmPassword.value.length >= 8) {
@@ -66,6 +69,7 @@ const fetchUserDetails = async () => {
             console.log("getU: " + response)
             name.value = response.fullName
             email.value = response.email
+            hasGoogle.value = response.isGoogleAuth
         }
     } catch (error) {
         console.error('Error fetching user details:', error)
@@ -113,21 +117,14 @@ onMounted(() => {
             <label for="email">Email:</label>
             <input type="email" id="email" v-model="email" readonly class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
         </div>
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <div class="flex items-center">
-                <input :type="passwordFieldType" id="password" v-model="password" readonly class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
-                <RoundButton @buttonClick="togglePasswordVisibility" text="Show Password" color="trento-blue" textColor="trento-white" class="ml-2 small-button" />
-            </div>
-        </div>
-        <div class="form-group">
+        <div class="form-group" v-if="!hasGoogle">
             <label for="new-password">New Password:</label>
             <div class="flex items-center">
                 <input :type="newPasswordFieldType" id="new-password" v-model="newPassword" @input="checkPasswordMatch" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
                 <RoundButton @buttonClick="toggleNewPasswordVisibility" text="Show Password" color="trento-blue" textColor="trento-white" class="ml-2 small-button" />
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group" v-if="!hasGoogle">
             <label for="confirm-password">Confirm Password:</label>
             <div class="flex items-center">
                 <input :type="confirmPasswordFieldType" id="confirm-password" v-model="confirmPassword" @input="checkPasswordMatch" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
@@ -135,7 +132,7 @@ onMounted(() => {
             </div>
             <p v-if="passwordMismatch" class="error-message">Le password non coincidono</p>
         </div>
-        <div class="form-group">
+        <div class="form-group" v-if="!hasGoogle">
             <RoundButton @buttonClick="updatePassword" text="Update Password" color="gray-300" textColor="black" class="mt-2 small-button" />
             <p v-if="passwordChanged" class="success-message">Password changed successfully</p>
         </div>
@@ -154,7 +151,7 @@ onMounted(() => {
         <div class="form-group">
             <label for="payment-method">Dati pagamento:</label>
             <p v-if="!paymentMethod" class="text-gray-500">Nessun metodo di pagamento collegato</p>
-            <RoundButton v-else @buttonClick="addPaymentMethod" text="Aggiungi nuovo metodo di pagamento" color="trento-blue" textColor="trento-white" class="mt-2 small-button" />
+            <RoundButton v-if="!paymentMethod" @buttonClick="addPaymentMethod" text="Aggiungi nuovo metodo di pagamento" color="trento-blue" textColor="trento-white" class="mt-2 small-button" />
         </div>
         <div class="form-group">
             <label for="theme">Tema:</label>
@@ -162,10 +159,6 @@ onMounted(() => {
                 <SunIcon v-if="theme === 'Chiaro'" class="h-5 w-5 text-yellow-500 transition duration-300 ease-in-out" />
                 <MoonIcon v-else class="h-5 w-5 text-gray-500 transition duration-300 ease-in-out" />
             </button>
-        </div>
-        <div class="form-group">
-            <label for="search-warning">Avviso viaggi con valutazione bassa: </label>
-            <input type="checkbox" id="sw" class="mr-2" />
         </div>  
     </div>
 </template>

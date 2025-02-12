@@ -55,13 +55,12 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const isAuthenticated = await getUser()
-
-  if (requiresAuth && !isAuthenticated.result) {
+  
+  if (requiresAuth && isAuthenticated.result==false) {
     try {
       next({ path: '/auth' })
     } catch (error) {
       console.log(error)
-      next({ path: '/' })
     }
   } else {
     next()
