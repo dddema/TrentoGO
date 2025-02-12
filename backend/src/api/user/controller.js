@@ -1,3 +1,4 @@
+import md5 from 'md5'
 import { User } from '../../model.js'
 
 export const userInfo = async (req, res) => {
@@ -29,6 +30,15 @@ export const updateCreditCardInfo = async (req, res) => {
 export const getCreditsCardInfo = async (req, res) => {
   const user = await User.findById(req.user.id, 'creditCardInfo')
   res.status(200).json(user.creditCardInfo)
+}
+
+export const updatePassword = async (req, res) => {
+  const user = await User.findById(req.user.id)
+  user.password = md5(req.body.password)
+
+  await user.save()
+
+  res.status(200)
 }
 
 export const addFavouritePlace = async (req, res) => {

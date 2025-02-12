@@ -6,7 +6,8 @@ import {
     updateCreditCardInfo,
     addFavouritePlace,
     deleteFavouritePlace,
-    getCreditsCardInfo
+    getCreditsCardInfo,
+    updatePassword
 } from './controller.js'
 
 const router = express.Router()
@@ -16,6 +17,7 @@ router.get('/', userInfo)
 router.patch('/preferences', updatePreferences)
 router.get('/credit-card-info', getCreditsCardInfo)
 router.put('/credit-card-info', updateCreditCardInfo)
+router.patch('/password', updatePassword)
 
 router.post('/favourites', addFavouritePlace)
 router.delete('/favourites/:id', deleteFavouritePlace)
