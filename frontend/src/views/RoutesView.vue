@@ -27,6 +27,8 @@ let nearestScooter;
 const fetchTransport = async () => {
   nearestBikeStall = await getNearestBikeStall(start.value.latitude, start.value.longitude);
   nearestScooter = await getNearestScooter(start.value.latitude, start.value.longitude);
+  nearestBikeStall = nearestBikeStall.data;
+  nearestScooter = nearestScooter.data;
   console.log('nearestBikeStall:', nearestBikeStall);
   console.log('nearestScooter:', nearestScooter);
 }
