@@ -22,7 +22,7 @@ const validatePassword = (password) => {
   return password.length >= 8;
 }
 
-const  doSignIn= async () => {
+const doSignIn= async () => {
   if (isEmailValid.value && isPasswordValid.value) {
       const response = await signIn(email.value, password.value);
 

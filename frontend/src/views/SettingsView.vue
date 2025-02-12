@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { SunIcon, MoonIcon } from '@heroicons/vue/24/solid'
 import BackButton from '@/components/BackButton.vue'
 import RoundButton from '@/components/RoundButton.vue'
 import { getUser, getCreditCardInfo, updatePreferences, updatePassword} from '@/lib/api'
@@ -19,6 +18,11 @@ const hasGoogle = ref(false)
 const hasBus = ref(false)
 const hasBike = ref(false)
 const hasScooter = ref(false)
+const ownerName = ref('')
+const ownerSurname = ref('')
+const cardNumber = ref('')
+const cvv = ref('')
+const expireDate = ref(null)
 
 const toggleNewPasswordVisibility = () => {
     newPasswordFieldType.value = newPasswordFieldType.value === 'password' ? 'text' : 'password'
@@ -31,12 +35,11 @@ const toggleConfirmPasswordVisibility = () => {
 const checkPasswordMatch = () => {
     if (newPassword.value.length > 0 && confirmPassword.value.length > 0) {
         passwordMismatch.value = newPassword.value !== confirmPassword.value
-    if (!passwordMismatch.value) {
-        passwordChanged.value = false
+        if (!passwordMismatch.value) {
+            passwordChanged.value = false
+        }
     }
 }
-    }
-    
 
 const updatePS = async () => {
     if (!passwordMismatch.value && newPassword.value.length >= 8 && confirmPassword.value.length >= 8) {
@@ -72,9 +75,14 @@ const fetchUserDetails = async () => {
 const fetchPaymentMethod = async () => {
     try {
         const response = await getCreditCardInfo()
-        console.log("getCC: " + response)
+        
         if (response.result) {
-            paymentMethod.value = response.creditCardInfo
+            paymentMethod.value = response
+            ownerName.value = response.ownerName
+            ownerSurname.value = response.ownerSurname
+            cardNumber.value = response.cardNumber
+            cvv.value = response.cvv
+            expireDate.value = response.expireDate
         }
     } catch (error) {
         console.error('Error fetching payment method:', error)
@@ -84,13 +92,11 @@ const fetchPaymentMethod = async () => {
 const updateSubscription = async () => {
     try {
         const res =await updatePreferences(theme.value, hasBus.value, hasBike.value, hasScooter.value);
-        console.log(res)   
+        console.log(res)
     } catch (error) {
         console.error(error)
     }
 }
-
-
 
 const toggleBusSubscription = () => {
     hasBus.value = !hasBus.value
@@ -158,15 +164,36 @@ onMounted(() => {
         <div class="form-group">
             <label for="payment-method">Dati pagamento:</label>
             <p v-if="!paymentMethod" class="text-gray-500">Nessun metodo di pagamento collegato</p>
-            <RoundButton v-if="!paymentMethod" @buttonClick="addPaymentMethod" text="Aggiungi nuovo metodo di pagamento" color="trento-blue" textColor="trento-white" class="mt-2 small-button" />
+
+            <div class="form-group">
+                <label for="owner-name">Nome:</label>
+                <input type="text" id="owner-name" v-model="ownerName" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+            </div>
+            <div class="form-group">
+                <label for="owner-surname">Cognome:</label>
+                <input type="text" id="owner-surname" v-model="ownerSurname" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+            </div>
+            <div class="form-group">
+                <label for="card-number">Numero della carta:</label>
+                <input type="text" id="card-number" v-model="cardNumber" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+            </div>
+            <div class="form-group">
+                <label for="cvv">CVV:</label>
+                <input type="text" id="cvv" v-model="cvv" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+            </div>
+            <div class="form-group">
+                <label for="expire-date">Data di scadenza:</label>
+                <input type="date" id="expire-date" v-model="expireDate" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+            </div>
+            <RoundButton v-if="!paymentMethod" @buttonClick="addPaymentMethod" text="Aggiungi metodo di pagamento" color="trento-blue" textColor="trento-white" class="mt-2 small-button" />
         </div>
         <div class="form-group">
             <label for="theme">Tema:</label>
             <button @click="toggleTheme" class="flex items-center transition duration-300 ease-in-out">
-                <SunIcon v-if="theme === 'light'" class="h-5 w-5 text-yellow-500 transition duration-300 ease-in-out" />
-                <MoonIcon v-else class="h-5 w-5 text-gray-500 transition duration-300 ease-in-out" />
+                <!-- <SunIcon v-if="theme === 'Chiaro'" class="h-5 w-5 text-yellow-500 transition duration-300 ease-in-out" />
+                <MoonIcon v-else class="h-5 w-5 text-gray-500 transition duration-300 ease-in-out" /> -->
             </button>
-        </div>  
+        </div>
     </div>
 </template>
 
