@@ -168,3 +168,14 @@ export const deleteFavouritePlace = async (id) => {
     return checkErrorStatus(error, [401])
   }
 }
+
+export const updatePassword = async (newPassword) => {
+  try {
+    const response = await api.patch('user/password', { newPassword })
+
+    return { result: true }
+  } catch (error) {
+    console.error(error.message)
+    return checkErrorStatus(error, [401])
+  }
+}
