@@ -114,9 +114,9 @@ export const getUser = async () => {
   }
 }
 
-export const updatePreferences = async (theme, ratingWarning) => {
+export const updatePreferences = async (theme, busSubscription, bikeSubscription, scooterSubscription ) => {
   try {
-    const response = await api.patch('user/preferences', { theme, ratingWarning })
+    const response = await api.patch('user/preferences', { theme, busSubscription, bikeSubscription, scooterSubscription   })
 
     return { result: true, ...response.data }
   } catch (error) {
@@ -169,9 +169,10 @@ export const deleteFavouritePlace = async (id) => {
   }
 }
 
-export const updatePassword = async (newPassword) => {
+export const updatePassword = async (password) => {
   try {
-    const response = await api.patch('user/password', { newPassword })
+    const response = await api.patch('user/password', { password })
+
 
     return { result: true }
   } catch (error) {

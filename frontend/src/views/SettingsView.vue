@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { SunIcon, MoonIcon } from '@heroicons/vue/24/solid'
 import BackButton from '@/components/BackButton.vue'
 import RoundButton from '@/components/RoundButton.vue'
-import { getUser, getCreditCardInfo } from '@/lib/api'
+import { getUser, getCreditCardInfo, updatePreferences, updatePassword} from '@/lib/api'
 
 const name = ref('')
 const email = ref('')
@@ -13,10 +13,12 @@ const newPasswordFieldType = ref('password')
 const confirmPasswordFieldType = ref('password')
 const passwordMismatch = ref(false)
 const passwordChanged = ref(false)
-const theme = ref('Chiaro')
-const favoritePlaces = ref([])
+const theme = ref('light')
 const paymentMethod = ref(null)
 const hasGoogle = ref(false)
+const hasBus = ref(false)
+const hasBike = ref(false)
+const hasScooter = ref(false)
 
 const toggleNewPasswordVisibility = () => {
     newPasswordFieldType.value = newPasswordFieldType.value === 'password' ? 'text' : 'password'
@@ -36,35 +38,31 @@ const checkPasswordMatch = () => {
     }
     
 
-const updatePassword = () => {
+const updatePS = async () => {
     if (!passwordMismatch.value && newPassword.value.length >= 8 && confirmPassword.value.length >= 8) {
         // Simulate a successful password update
         passwordChanged.value = true
-        // Here you would typically send a request to your backend to update the password
-        // axios.post('/update-password', { newPassword: newPassword.value })
-        //     .then(response => {
-        //         passwordChanged.value = true
-        //     })
-        //     .catch(error => {
-        //         console.error('Error updating password:', error)
-        //     })
+        const res = await updatePassword(newPassword.value);
+        console.log(res)
     } else {
         passwordChanged.value = false
     }
 }
 
 const toggleTheme = () => {
-    theme.value = theme.value === 'Chiaro' ? 'Scuro' : 'Chiaro'
+    theme.value = theme.value === 'light' ? 'dark' : 'light'
 }
 
 const fetchUserDetails = async () => {
     try {
         const response = await getUser()
         if (response.result) {
-            console.log("getU: " + response)
             name.value = response.fullName
             email.value = response.email
             hasGoogle.value = response.isGoogleAuth
+            hasBus.value = response.preferences.busSubscription
+            hasBike.value = response.preferences.bikeSubscription
+            hasScooter.value = response.preferences.scooterSubscription
         }
     } catch (error) {
         console.error('Error fetching user details:', error)
@@ -83,21 +81,35 @@ const fetchPaymentMethod = async () => {
     }
 }
 
-const fetchFavoritePlaces = async () => {
+const updateSubscription = async () => {
     try {
-        const response = await getUser()
-        if (response.result) {
-            favoritePlaces.value = response.favourites
-        }
+        const res =await updatePreferences(theme.value, hasBus.value, hasBike.value, hasScooter.value);
+        console.log(res)   
     } catch (error) {
-        console.error('Error fetching favorite places:', error)
+        console.error(error)
     }
+}
+
+
+
+const toggleBusSubscription = () => {
+    hasBus.value = !hasBus.value
+    updateSubscription()
+}
+
+const toggleBikeSubscription = () => {
+    hasBike.value = !hasBike.value
+    updateSubscription()
+}
+
+const toggleScooterSubscription = () => {
+    hasScooter.value = !hasScooter.value
+    updateSubscription()
 }
 
 onMounted(() => {
     fetchUserDetails()
     fetchPaymentMethod()
-    fetchFavoritePlaces()
 })
 </script>
 
@@ -128,20 +140,20 @@ onMounted(() => {
             <p v-if="passwordMismatch" class="error-message">Le password non coincidono</p>
         </div>
         <div class="form-group" v-if="!hasGoogle">
-            <RoundButton @buttonClick="updatePassword" text="Update Password" color="gray-300" textColor="black" class="mt-2 small-button" />
+            <RoundButton @buttonClick="updatePS" text="Update Password" color="gray-300" textColor="black" class="mt-2 small-button" />
             <p v-if="passwordChanged" class="success-message">Password changed successfully</p>
         </div>
         <div class="form-group">
             <label for="bici">Sottoscrizione Biciclette:</label>
-            <input type="checkbox" id="bici" class="mr-2" checked />
+            <input type="checkbox" id="bici" class="mr-2" :checked="hasBike" @change="toggleBikeSubscription" />
         </div>
         <div class="form-group">
             <label for="monopattino">Sottoscrizione Monopattini:</label>
-            <input type="checkbox" id="monopattino" class="mr-2" />
+            <input type="checkbox" id="monopattino" class="mr-2" :checked="hasScooter" @change="toggleScooterSubscription" />
         </div>
         <div class="form-group">
             <label for="bus">Sottoscrizione Bus:</label>
-            <input type="checkbox" id="bus" class="mr-2" />
+            <input type="checkbox" id="bus" class="mr-2" :checked="hasBus" @change="toggleBusSubscription" />
         </div>
         <div class="form-group">
             <label for="payment-method">Dati pagamento:</label>
@@ -151,7 +163,7 @@ onMounted(() => {
         <div class="form-group">
             <label for="theme">Tema:</label>
             <button @click="toggleTheme" class="flex items-center transition duration-300 ease-in-out">
-                <SunIcon v-if="theme === 'Chiaro'" class="h-5 w-5 text-yellow-500 transition duration-300 ease-in-out" />
+                <SunIcon v-if="theme === 'light'" class="h-5 w-5 text-yellow-500 transition duration-300 ease-in-out" />
                 <MoonIcon v-else class="h-5 w-5 text-gray-500 transition duration-300 ease-in-out" />
             </button>
         </div>  
