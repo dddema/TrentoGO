@@ -1,7 +1,7 @@
 <script setup>
 import axios from 'axios'
 
-import { computed, ref, watch, onMounted, useTemplateRef, onBeforeUnmount } from 'vue'
+import { ref, watch, onMounted, useTemplateRef, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import FavPlaceButton from './FavPlaceButton.vue'
 
@@ -15,6 +15,8 @@ const props = defineProps({
     required: true,
   }
 })
+
+const emit = defineEmits(['addFavourite'])
 
 const router = useRouter()
 const root = useTemplateRef('root')
@@ -114,7 +116,9 @@ const goToRoutes = (placeId) => {
     <div ref="root" class="flex flex-col items-center text-center fixed transition-bottom duration-300 delay-75 text-dark-gray" :class="[focused ? 'bottom-50' : 'bottom-10']">
       <div v-if="focused" class="w-2xl -mb-6 rounded-[1rem] pt-3 pb-9 border-1 border-gray-300 px-10 bg-white/30 backdrop-blur-md z-1">
         <ul class="pb-4">
-          <li @click="goToRoutes(result.place_id)" v-for="result in autocompleteResults" class="cursor-pointer flex items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 py-2">
+          <li @click="goToRoutes(result.place_id)" v-for="result in autocompleteResults"
+            class="group cursor-pointer flex items-center text-left border-b-1 last:border-b-0 border-gray-300 py-3 hover:bg-gray-200/50"
+          >
             <div class="text-center flex flex-col items-center justify-center w-4 ml-5">
               <img v-if="!result.types.includes('route')" src="../assets/icons/location.svg"/>
               <img v-else src="../assets/icons/road.svg"/>
@@ -122,6 +126,10 @@ const goToRoutes = (placeId) => {
               <span v-if="result.distance_meters" class="text-xs">{{ (result.distance_meters/1000).toFixed(1) }}&nbsp;km</span>
             </div>
             <span class="text-md pl-8 truncate max-w-80">{{ `${result.terms[0].value}, `}}</span><span class="pl-1 text-gray-400 truncate" >{{ `${result.terms[1].value}` }}</span>
+            <span
+              @click="emit('addFavourite', { title: result.terms[0].value, icon: 'star', placeId: result.place_id })"
+              class="hidden group-hover:inline ml-auto mr-2 text-neutral-50 text-center rounded-full w-6 bg-trento-blue"
+            >+</span>
           </li>
         </ul>
         <div id="favorites_slider" class="flex flex-row gap-2 overflow-visible items-center h-10 overflow-x-scroll no-scrollbar mask-blur scroll-px-150 justify-center">

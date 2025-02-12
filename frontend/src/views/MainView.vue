@@ -5,7 +5,7 @@ import { GoogleMap } from "vue3-google-map"
 import { ref } from 'vue'
 
 import SearchBar from "@/components/SearchBar.vue";
-import { getUser } from "@/lib/api";
+import { addFavouritePlace, getUser } from "@/lib/api";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 const trentoCoords = { lat: 46.066630516969994, lng: 11.136310379875919 }
@@ -129,6 +129,15 @@ onMounted(() => {
 
   fetchUserData();
 })
+
+const addFavouriteHandler = async (place) => {
+  const res = await addFavouritePlace(place.title, place.icon, place.placeId)
+  if (res.result) {
+    userPreferences.value.favourites = res.data
+  } else {
+    console.error(res.message)
+  }
+}
 </script>
 
 <template>
@@ -154,8 +163,9 @@ onMounted(() => {
       <RouterView class="shadow-xl z-1 overflow-auto w-110 h-full bg-trento-white" />
     </div>
 
-    <SearchBar 
+    <SearchBar
       v-if="isHome" 
+      @add-favourite="addFavouriteHandler"
       :position="position"
       :favourites="userPreferences.favourites || []"
     />

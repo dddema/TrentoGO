@@ -229,9 +229,9 @@ export const setCreditCardInfo = async (ownerName, ownerSurname, number, cvc, ex
  *   console.error('Error adding favourite place:', response.message);
  * }
  */
-export const addFavouritePlace = async (title, icon, color, lat, lng) => {
+export const addFavouritePlace = async (title, icon, placeId) => {
   try {
-    const response = await api.post('user/favourites', { title, icon, color, lat, lng })
+    const response = await api.post('user/favourites', { title, icon, placeId })
 
     return { result: true, data: response.data }
   } catch (error) {
