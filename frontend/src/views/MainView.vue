@@ -1,11 +1,11 @@
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import { GoogleMap } from "vue3-google-map"
 import { ref } from 'vue'
-// import { Loader } from "@googlemaps/js-api-loader"
 
 import SearchBar from "@/components/SearchBar.vue";
+import { getUser } from "@/lib/api";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 const trentoCoords = { lat: 46.066630516969994, lng: 11.136310379875919 }
@@ -69,9 +69,7 @@ const mapStyles = [
     "featureType": "road",
     "elementType": "labels.icon",
     "stylers": [
-      { 
-        "visibility": "off" 
-      }
+      { "visibility": "off" }
     ]
   },
   {
@@ -98,32 +96,46 @@ const mapStyles = [
   {
     "featureType": "water",
     "stylers": [
-    { "color": "#b8caf4" }
+      { "color": "#b8caf4" }
     ]
   },
 ]
 
 const route = useRoute()
-const isHome = computed(() => route.path == '/')
 
 const position = ref({ latitude: 46.066630516969994, longitude: 11.136310379875919 })
+const userPreferences = ref({})
 
-navigator.geolocation.getCurrentPosition(
-  (current_position) => {
-    console.log(current_position)
-    position.value = current_position.coords
-  },
-  (error) => {
-    console.error(error)
+const isHome = computed(() => route.path == '/')
+
+const fetchUserData = async () => {
+  const res = await getUser()
+  if (res.result) {
+    userPreferences.value = res.data
+  } else {
+    console.error(res.message)
   }
-);
+}
+
+onMounted(() => {
+  navigator.geolocation.getCurrentPosition(
+    (current_position) => {
+      position.value = current_position.coords
+    },
+    (error) => {
+      console.error(error)
+    }
+  );
+
+  fetchUserData();
+})
 </script>
 
 <template>
   <main>
     <div class="w-screen h-screen flex flex-row">
       <img src="../assets/icons/TrentoGoLogo.svg" class="fixed z-100 opacity-40 w-60 p-4 select-none">
-      <div class="grow h-full saturate-180">
+      <div class="grow h-full">
         <GoogleMap
           class="w-full h-full"
           :api-key="GOOGLE_MAPS_API_KEY"
@@ -142,39 +154,11 @@ navigator.geolocation.getCurrentPosition(
       <RouterView class="shadow-xl z-1 overflow-auto w-110 h-full bg-trento-white" />
     </div>
 
-    <SearchBar v-if="isHome" :position="position"/>
-
-    <!-- <div class="home-content">
-      <div class="back_button">
-        <img src="../assets/icons/arrow_back.svg" alt="Torna Indietro" />
-        <p>Informazioni Viaggio</p>
-      </div>
-
-      <div class="travel-information-section" >
-        <img src="../assets/icons/directions_bus.svg" class="travel-info-transport-icon"/>
-        <p class="travel-info-transport-title">Autobus</p>
-        <p class="travel-info-time">15 min</p>
-        <p class="travel-info-arrive-time">Arrivo alle <b>12:34</b></p>
-      </div>
-
-      <p style="margin-top: 0;"><span style="color: #34c139;">-823g</span> di CO2 rispetto ad un’auto</p>
-
-      <img src="../assets/icons/temp_travel_info.png" alt="TEMP" style="width: 28vh; margin-top: 5vh; margin-bottom: 4vh;"/>
-
-      <div class="ticket-section">
-        <p class="ticket-name">Biglietto Ordinario Zona 2</p>
-        <p class="ticket-price">1.00€</p>
-        <div class="buy-ticket-button">
-          <img src="../assets/icons/cart.svg"/>
-          <p>Compra il biglietto</p>
-        </div>
-      </div>
-      
-      <div class="directions-button">
-        <img src="../assets/icons/directions.svg" />
-        <p>Indicazioni</p>
-      </div>
-    </div> -->
+    <SearchBar 
+      v-if="isHome" 
+      :position="position"
+      :favourites="userPreferences.favourites || []"
+    />
   </main>
 </template>
 
