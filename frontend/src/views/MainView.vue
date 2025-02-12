@@ -1,27 +1,19 @@
 <script setup>
-import { computed, onMounted } from "vue";
-import { RouterLink, useRoute } from "vue-router";
-import { GoogleMap } from "vue3-google-map"
-import { ref } from 'vue'
-
+import { computed, onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { GoogleMap } from "vue3-google-map";
 import SearchBar from "@/components/SearchBar.vue";
 import { addFavouritePlace, getUser } from "@/lib/api";
+import { CogIcon } from "@heroicons/vue/24/solid";
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-const trentoCoords = { lat: 46.066630516969994, lng: 11.136310379875919 }
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const trentoCoords = { lat: 46.066630516969994, lng: 11.136310379875919 };
 const bounds = {
-  // 46.126986, 11.202991
   east: 11.202991,
   north: 46.137986,
-  // 46.014265, 11.049947
   west: 11.049947,
   south: 46.014265
-}
-
-// const mapsApiLoader = new Loader({
-//   apiKey: GOOGLE_MAPS_API_KEY,
-//   version: "weekly",
-// })
+};
 
 const mapStyles = [
   {
@@ -99,45 +91,50 @@ const mapStyles = [
       { "color": "#b8caf4" }
     ]
   },
-]
+];
 
-const route = useRoute()
+const route = useRoute();
+const router = useRouter();
 
-const position = ref({ latitude: 46.066630516969994, longitude: 11.136310379875919 })
-const userPreferences = ref({})
+const position = ref({ latitude: 46.066630516969994, longitude: 11.136310379875919 });
+const userPreferences = ref({});
 
-const isHome = computed(() => route.path == '/')
+const isHome = computed(() => route.path == '/');
 
 const fetchUserData = async () => {
-  const res = await getUser()
+  const res = await getUser();
   if (res.result) {
-    userPreferences.value = res.data
+    userPreferences.value = res.data;
   } else {
-    console.error(res.message)
+    console.error(res.message);
   }
-}
+};
 
 onMounted(() => {
   navigator.geolocation.getCurrentPosition(
     (current_position) => {
-      position.value = current_position.coords
+      position.value = current_position.coords;
     },
     (error) => {
-      console.error(error)
+      console.error(error);
     }
   );
 
   fetchUserData();
-})
+});
 
 const addFavouriteHandler = async (place) => {
-  const res = await addFavouritePlace(place.title, place.icon, place.placeId)
+  const res = await addFavouritePlace(place.title, place.icon, place.placeId);
   if (res.result) {
-    userPreferences.value.favourites = res.data
+    userPreferences.value.favourites = res.data;
   } else {
-    console.error(res.message)
+    console.error(res.message);
   }
-}
+};
+
+const goToSettings = () => {
+  router.push('/settings');
+};
 </script>
 
 <template>
@@ -162,15 +159,24 @@ const addFavouriteHandler = async (place) => {
       </div>
       <RouterView class="shadow-xl z-1 overflow-auto w-110 h-full bg-trento-white" />
     </div>
-
-    <SearchBar
-      v-if="isHome" 
-      @add-favourite="addFavouriteHandler"
-      :position="position"
-      :favourites="userPreferences.favourites || []"
-    />
+      <SearchBar
+        v-if="isHome" 
+        @add-favourite="addFavouriteHandler"
+        :position="position"
+        :favourites="userPreferences.favourites || []"
+      />
+    <CogIcon v-if="isHome" @click="goToSettings" class="settings-icon" />
   </main>
 </template>
 
 <style scoped>
+.settings-icon {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  color: #4A5568; /* Tailwind's gray-700 */
+  cursor: pointer;
+}
 </style>
