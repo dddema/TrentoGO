@@ -4,7 +4,7 @@ import { BlacklistedToken } from "../../model.js"
 
 const authenticateToken = async (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1]
-  if (!token) return res.sendStatus(400)
+  if (!token) res.status(401).json({ message: "Non hai fatto l'accesso." })
 
   jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
     if (err || await BlacklistedToken.exists({ token })) {
