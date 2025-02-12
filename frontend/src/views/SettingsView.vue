@@ -9,7 +9,6 @@ const name = ref('')
 const email = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
-const passwordFieldType = ref('password')
 const newPasswordFieldType = ref('password')
 const confirmPasswordFieldType = ref('password')
 const passwordMismatch = ref(false)
@@ -18,10 +17,6 @@ const theme = ref('Chiaro')
 const favoritePlaces = ref([])
 const paymentMethod = ref(null)
 const hasGoogle = ref(false)
-
-const togglePasswordVisibility = () => {
-    passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password'
-}
 
 const toggleNewPasswordVisibility = () => {
     newPasswordFieldType.value = newPasswordFieldType.value === 'password' ? 'text' : 'password'
@@ -138,7 +133,7 @@ onMounted(() => {
         </div>
         <div class="form-group">
             <label for="bici">Sottoscrizione Biciclette:</label>
-            <input type="checkbox" id="bici" class="mr-2" />
+            <input type="checkbox" id="bici" class="mr-2" checked />
         </div>
         <div class="form-group">
             <label for="monopattino">Sottoscrizione Monopattini:</label>
