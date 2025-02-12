@@ -1,15 +1,24 @@
 <script setup>
-import router from '@/router'
 import axios from 'axios'
-import { compile, computed, ref, watch, onMounted, useTemplateRef, onBeforeUnmount } from 'vue'
+
+import { ref, watch, onMounted, useTemplateRef, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
+import FavPlaceButton from './FavPlaceButton.vue'
 
 const props = defineProps({
   position: {
     type: Object,
     required: true,
+  },
+  favourites: {
+    type: Array,
+    required: true,
   }
 })
 
+const emit = defineEmits(['addFavourite'])
+
+const router = useRouter()
 const root = useTemplateRef('root')
 
 const query = ref('')
@@ -36,7 +45,7 @@ const fetchData = async (newQuery) => {
       if (response.data.status == 'OK')
         autocompleteResults.value = response.data.predictions
       else
-        console.error("Google maps API Error: " + response.data.error_message)
+        console.error("Google maps API Error:", response.data.error_message)
     } catch (error) {
       console.error(error)
     }
@@ -97,8 +106,8 @@ onBeforeUnmount(() => {
 //   return element.scrollWidth > element.clientWidth;
 // }
 
-const goToRoutes = (result) => {
-  router.push(`/routes/${props.position.latitude},${props.position.longitude}/${result.place_id}`);
+const goToRoutes = (placeId) => {
+  router.push(`/routes/${props.position.latitude},${props.position.longitude}/${placeId}`);
 }
 </script>
 
@@ -107,7 +116,9 @@ const goToRoutes = (result) => {
     <div ref="root" class="flex flex-col items-center text-center fixed transition-bottom duration-300 delay-75 text-dark-gray" :class="[focused ? 'bottom-50' : 'bottom-10']">
       <div v-if="focused" class="w-2xl -mb-6 rounded-[1rem] pt-3 pb-9 border-1 border-gray-300 px-10 bg-white/30 backdrop-blur-md z-1">
         <ul class="pb-4">
-          <li @click="goToRoutes(result)" v-for="result in autocompleteResults" class="flex items-center my-1 text-left border-b-1 last:border-b-0 border-gray-300 py-2">
+          <li @click="goToRoutes(result.place_id)" v-for="result in autocompleteResults"
+            class="group cursor-pointer flex items-center text-left border-b-1 last:border-b-0 border-gray-300 py-3 hover:bg-gray-200/50"
+          >
             <div class="text-center flex flex-col items-center justify-center w-4 ml-5">
               <img v-if="!result.types.includes('route')" src="../assets/icons/location.svg"/>
               <img v-else src="../assets/icons/road.svg"/>
@@ -115,18 +126,15 @@ const goToRoutes = (result) => {
               <span v-if="result.distance_meters" class="text-xs">{{ (result.distance_meters/1000).toFixed(1) }}&nbsp;km</span>
             </div>
             <span class="text-md pl-8 truncate max-w-80">{{ `${result.terms[0].value}, `}}</span><span class="pl-1 text-gray-400 truncate" >{{ `${result.terms[1].value}` }}</span>
+            <span
+              @click="emit('addFavourite', { title: result.terms[0].value, icon: 'star', placeId: result.place_id })"
+              class="hidden group-hover:inline ml-auto mr-2 text-neutral-50 text-center rounded-full w-6 bg-trento-blue"
+            >+</span>
           </li>
         </ul>
-        <div id="favorites_slider" class="flex flex-row text-xs overflow-visible items-center h-10 overflow-x-scroll no-scrollbar mask-blur scroll-px-150 justify-center">
+        <div id="favorites_slider" class="flex flex-row gap-2 overflow-visible items-center h-10 overflow-x-scroll no-scrollbar mask-blur scroll-px-150 justify-center">
           <span class="bg-transparent w-20 text-transparent">spacer</span>
-          <span class="bg-blue-500 shadow-md shadow-blue-500/50 shrink-0 px-2 py-1 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/home.svg"/>
-            <span class="ml-1">Casa</span>
-          </span>
-          <span class="bg-trento-amber shadow-md shadow-trento-amber/50 shrink-0 mx-1 px-2 py-1 rounded-full text-white flex flex-row">
-            <img src="../assets/icons/book.svg"/>
-            <span class="ml-1">Uni</span>
-          </span>
+          <FavPlaceButton v-for="place in favourites" :place="place" @click="goToRoutes(place.placeId)" />
           <span class="bg-transparent w-20 text-transparent">spacer</span>
         </div>
       </div>

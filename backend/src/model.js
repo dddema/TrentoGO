@@ -1,14 +1,19 @@
 import mongoose from 'mongoose';
 
 const favouritePlaceSchema = new mongoose.Schema({
-  title: String,
+  title: {
+    type: String,
+    required: true
+  },
   icon: {
     type: String,
-    enum: ['home', 'work', 'star']
+    enum: ['home', 'work', 'dumbell', 'book', 'star'],
+    default: 'star'
   },
-  color: String,
-  lat: Number,
-  lng: Number
+  placeId: {
+    type: String,
+    required: true
+  }
 })
 
 const userPreferencesSchema = new mongoose.Schema({
@@ -17,25 +22,55 @@ const userPreferencesSchema = new mongoose.Schema({
     enum: ['light', 'dark', 'auto'],
     default: 'auto'
   },
-  ratingWarning: {
+  bikeSubscription: {
     type: Boolean,
-    default: true
+    default: false
+  },
+  scooterSubscription: {
+    type: Boolean,
+    default: false
+  },
+  busSubscription: {
+    type: Boolean,
+    default: false
   },
   favourites: [favouritePlaceSchema]
 })
 
 const creditCardInfoSchema = new mongoose.Schema({
-  ownerName: String,
-  ownerSurname: String,
-  number: String,
-  cvc: String,
-  expireAt: Date
+  ownerName: {
+    type: String,
+    required: true
+  },
+  ownerSurname: {
+    type: String,
+    required: true
+  },
+  number: {
+    type: String,
+    required: true
+  },
+  cvc: {
+    type: String,
+    required: true
+  },
+  expireAt: {
+    type: Date,
+    required: true
+  }
 })
 
 const userSchema = new mongoose.Schema({
-  email: String,
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
   password: String,
-  fullName: String,
+  fullName: {
+    type: String,
+    required: true
+  },
   isGoogleAuth: {
     type: Boolean,
     default: false

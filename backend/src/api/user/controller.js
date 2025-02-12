@@ -8,7 +8,9 @@ export const userInfo = async (req, res) => {
 export const updatePreferences = async (req, res) => {
   const user = await User.findById(req.user.id)
   user.preferences.theme = req.body.theme
-  user.preferences.ratingWarning = req.body.ratingWarning
+  user.preferences.bikeSubscription = req.body.bikeSubscription
+  user.preferences.scooterSubscription = req.body.scooterSubscription
+  user.preferences.busSubscription = req.body.busSubscription
 
   await user.save()
 
