@@ -128,25 +128,9 @@ export const getUser = async () => {
   }
 }
 
-/**
- * Updates the user's preferences.
- * 
- * @param {string} theme - The user's preferred theme.
- * @param {boolean} ratingWarning - The user's rating warning preference.
- * @returns {Promise<Object>} An object containing the result of the operation and updated preferences
- * or an error message if the request failed.
- * 
- * @example
- * const response = await updatePreferences('dark', true);
- * if (response.result) {
- *   console.log('Preferences updated:', response);
- * } else {
- *   console.error('Error updating preferences:', response.message);
- * }
- */
-export const updatePreferences = async (theme, ratingWarning) => {
+export const updatePreferences = async (theme, busSubscription, bikeSubscription, scooterSubscription ) => {
   try {
-    const response = await api.patch('user/preferences', { theme, ratingWarning })
+    const response = await api.patch('user/preferences', { theme, busSubscription, bikeSubscription, scooterSubscription   })
 
     return { result: true, data: response.data }
   } catch (error) {
@@ -259,61 +243,7 @@ export const deleteFavouritePlace = async (id) => {
   try {
     const response = await api.delete(`user/favourites/${id}`)
 
-    return { result: true, data: response.data }
-  } catch (error) {
-    console.error(error.message)
-    return checkErrorStatus(error, [401])
-  }
-}
-
-/**
- * Retrieves the nearest bike stall based on the provided coordinates.
- * 
- * @param {number} lat - The latitude of the current location.
- * @param {number} lng - The longitude of the current location.
- * @returns {Promise<Object>} An object containing the result of the operation and nearest bike stall information
- * or an error message if the request failed.
- * 
- * @example
- * const response = await getNearestBikeStall(46.066, 11.121);
- * if (response.result) {
- *   console.log('Nearest bike stall:', response);
- * } else {
- *   console.error('Error fetching nearest bike stall:', response.message);
- * }
- */
-export const getNearestBikeStall = async (lat, lng) => {
-  try {
-    const response = await api.get('transport/near-bike-stall', { params: { lat, lng } })
-
-    return { result: true, data: response.data }
-  } catch (error) {
-    console.error(error.message)
-    return checkErrorStatus(error, [401])
-  }
-}
-
-/**
- * Retrieves the nearest scooter based on the provided coordinates.
- * 
- * @param {number} lat - The latitude of the current location.
- * @param {number} lng - The longitude of the current location.
- * @returns {Promise<Object>} An object containing the result of the operation and nearest scooter information
- * or an error message if the request failed.
- * 
- * @example
- * const response = await getNearestScooter(46.066, 11.121);
- * if (response.result) {
- *   console.log('Nearest scooter:', response);
- * } else {
- *   console.error('Error fetching nearest scooter:', response.message);
- * }
- */
-export const getNearestScooter = async (lat, lng) => {
-  try {
-    const response = await api.get('transport/near-scooter', { params: { lat, lng } })
-
-    return { result: true, data: response.data }
+    return { result: true, favourites: response.data }
   } catch (error) {
     console.error(error.message)
     return checkErrorStatus(error, [401])

@@ -1,26 +1,28 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
 import BackButton from '@/components/BackButton.vue'
 import RoundButton from '@/components/RoundButton.vue'
+import { getUser, getCreditCardInfo, updatePreferences, updatePassword} from '@/lib/api'
 
 const name = ref('')
 const email = ref('')
-const password = ref('password123')
 const newPassword = ref('')
 const confirmPassword = ref('')
-const passwordFieldType = ref('password')
 const newPasswordFieldType = ref('password')
 const confirmPasswordFieldType = ref('password')
 const passwordMismatch = ref(false)
 const passwordChanged = ref(false)
-const theme = ref('Chiaro')
-const favoritePlaces = ref([])
+const theme = ref('light')
 const paymentMethod = ref(null)
-
-const togglePasswordVisibility = () => {
-    passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password'
-}
+const hasGoogle = ref(false)
+const hasBus = ref(false)
+const hasBike = ref(false)
+const hasScooter = ref(false)
+const ownerName = ref('')
+const ownerSurname = ref('')
+const cardNumber = ref('')
+const cvv = ref('')
+const expireDate = ref(null)
 
 const toggleNewPasswordVisibility = () => {
     newPasswordFieldType.value = newPasswordFieldType.value === 'password' ? 'text' : 'password'
@@ -31,72 +33,95 @@ const toggleConfirmPasswordVisibility = () => {
 }
 
 const checkPasswordMatch = () => {
-    passwordMismatch.value = newPassword.value !== confirmPassword.value
-    if (!passwordMismatch.value) {
-        passwordChanged.value = false
+    if (newPassword.value.length > 0 && confirmPassword.value.length > 0) {
+        passwordMismatch.value = newPassword.value !== confirmPassword.value
+        if (!passwordMismatch.value) {
+            passwordChanged.value = false
+        }
     }
 }
 
-const updatePassword = () => {
+const updatePS = async () => {
     if (!passwordMismatch.value && newPassword.value.length >= 8 && confirmPassword.value.length >= 8) {
         // Simulate a successful password update
         passwordChanged.value = true
-        // Here you would typically send a request to your backend to update the password
-        // axios.post('/update-password', { newPassword: newPassword.value })
-        //     .then(response => {
-        //         passwordChanged.value = true
-        //     })
-        //     .catch(error => {
-        //         console.error('Error updating password:', error)
-        //     })
+        const res = await updatePassword(newPassword.value);
+        console.log(res)
     } else {
         passwordChanged.value = false
     }
 }
 
 const toggleTheme = () => {
-    theme.value = theme.value === 'Chiaro' ? 'Scuro' : 'Chiaro'
+    theme.value = theme.value === 'light' ? 'dark' : 'light'
 }
 
-// const fetchUserDetails = async () => {
-//     try {
-//         const response = await axios.get('/api/user/your-user-id')
-//         name.value = response.data.name
-//         email.value = response.data.email
-//     } catch (error) {
-//         console.error('Error fetching user details:', error)
-//     }
-// }
+const fetchUserDetails = async () => {
+    try {
+        const response = await getUser()
+        if (response.result) {
+            name.value = response.fullName
+            email.value = response.email
+            hasGoogle.value = response.isGoogleAuth
+            hasBus.value = response.preferences.busSubscription
+            hasBike.value = response.preferences.bikeSubscription
+            hasScooter.value = response.preferences.scooterSubscription
+        }
+    } catch (error) {
+        console.error('Error fetching user details:', error)
+    }
+}
 
-// const fetchPaymentMethod = async () => {
-//     try {
-//         const response = await axios.get('/api/payment-method/your-user-id')
-//         paymentMethod.value = response.data.paymentMethod
-//     } catch (error) {
-//         console.error('Error fetching payment method:', error)
-//     }
-// }
+const fetchPaymentMethod = async () => {
+    try {
+        const response = await getCreditCardInfo()
+        
+        if (response.result) {
+            paymentMethod.value = response
+            ownerName.value = response.ownerName
+            ownerSurname.value = response.ownerSurname
+            cardNumber.value = response.cardNumber
+            cvv.value = response.cvv
+            expireDate.value = response.expireDate
+        }
+    } catch (error) {
+        console.error('Error fetching payment method:', error)
+    }
+}
 
-// const fetchFavoritePlaces = async () => {
-//     try {
-//         const response = await axios.get('/api/favorite-places/your-user-id')
-//         favoritePlaces.value = undefined
-//     } catch (error) {
-//         console.error('Error fetching favorite places:', error)
-//     }
-// }
+const updateSubscription = async () => {
+    try {
+        const res =await updatePreferences(theme.value, hasBus.value, hasBike.value, hasScooter.value);
+        console.log(res)
+    } catch (error) {
+        console.error(error)
+    }
+}
 
-// onMounted(() => {
-//     fetchUserDetails()
-//     fetchPaymentMethod()
-//     fetchFavoritePlaces()
-// })
+const toggleBusSubscription = () => {
+    hasBus.value = !hasBus.value
+    updateSubscription()
+}
+
+const toggleBikeSubscription = () => {
+    hasBike.value = !hasBike.value
+    updateSubscription()
+}
+
+const toggleScooterSubscription = () => {
+    hasScooter.value = !hasScooter.value
+    updateSubscription()
+}
+
+onMounted(() => {
+    fetchUserDetails()
+    fetchPaymentMethod()
+})
 </script>
 
 <template>
     <div class="settings-container">
         <BackButton text="Torna Indietro" />
-        <p class="greeting mt-4">{{ greeting }}</p>
         <div class="form-group mt-4">
             <label for="name">Name:</label>
             <input type="text" id="name" v-model="name" readonly class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
@@ -105,21 +130,14 @@ const toggleTheme = () => {
             <label for="email">Email:</label>
             <input type="email" id="email" v-model="email" readonly class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
         </div>
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <div class="flex items-center">
-                <input :type="passwordFieldType" id="password" v-model="password" readonly class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
-                <RoundButton @buttonClick="togglePasswordVisibility" text="Show Password" color="trento-blue" textColor="trento-white" class="ml-2 small-button" />
-            </div>
-        </div>
-        <div class="form-group">
+        <div class="form-group" v-if="!hasGoogle">
             <label for="new-password">New Password:</label>
             <div class="flex items-center">
                 <input :type="newPasswordFieldType" id="new-password" v-model="newPassword" @input="checkPasswordMatch" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
                 <RoundButton @buttonClick="toggleNewPasswordVisibility" text="Show Password" color="trento-blue" textColor="trento-white" class="ml-2 small-button" />
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group" v-if="!hasGoogle">
             <label for="confirm-password">Confirm Password:</label>
             <div class="flex items-center">
                 <input :type="confirmPasswordFieldType" id="confirm-password" v-model="confirmPassword" @input="checkPasswordMatch" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
@@ -127,26 +145,47 @@ const toggleTheme = () => {
             </div>
             <p v-if="passwordMismatch" class="error-message">Le password non coincidono</p>
         </div>
-        <div class="form-group">
-            <RoundButton @buttonClick="updatePassword" text="Update Password" color="gray-300" textColor="black" class="mt-2 small-button" />
+        <div class="form-group" v-if="!hasGoogle">
+            <RoundButton @buttonClick="updatePS" text="Update Password" color="gray-300" textColor="black" class="mt-2 small-button" />
             <p v-if="passwordChanged" class="success-message">Password changed successfully</p>
         </div>
         <div class="form-group">
             <label for="bici">Sottoscrizione Biciclette:</label>
-            <input type="checkbox" id="bici" class="mr-2" />
+            <input type="checkbox" id="bici" class="mr-2" :checked="hasBike" @change="toggleBikeSubscription" />
         </div>
         <div class="form-group">
             <label for="monopattino">Sottoscrizione Monopattini:</label>
-            <input type="checkbox" id="monopattino" class="mr-2" />
+            <input type="checkbox" id="monopattino" class="mr-2" :checked="hasScooter" @change="toggleScooterSubscription" />
         </div>
         <div class="form-group">
             <label for="bus">Sottoscrizione Bus:</label>
-            <input type="checkbox" id="bus" class="mr-2" />
+            <input type="checkbox" id="bus" class="mr-2" :checked="hasBus" @change="toggleBusSubscription" />
         </div>
         <div class="form-group">
             <label for="payment-method">Dati pagamento:</label>
             <p v-if="!paymentMethod" class="text-gray-500">Nessun metodo di pagamento collegato</p>
-            <RoundButton v-else @buttonClick="addPaymentMethod" text="Aggiungi nuovo metodo di pagamento" color="trento-blue" textColor="trento-white" class="mt-2 small-button" />
+
+            <div class="form-group">
+                <label for="owner-name">Nome:</label>
+                <input type="text" id="owner-name" v-model="ownerName" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+            </div>
+            <div class="form-group">
+                <label for="owner-surname">Cognome:</label>
+                <input type="text" id="owner-surname" v-model="ownerSurname" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+            </div>
+            <div class="form-group">
+                <label for="card-number">Numero della carta:</label>
+                <input type="text" id="card-number" v-model="cardNumber" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+            </div>
+            <div class="form-group">
+                <label for="cvv">CVV:</label>
+                <input type="text" id="cvv" v-model="cvv" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+            </div>
+            <div class="form-group">
+                <label for="expire-date">Data di scadenza:</label>
+                <input type="date" id="expire-date" v-model="expireDate" class="border border-gray-300 rounded-md p-2 mb-4 w-full max-w-xs" />
+            </div>
+            <RoundButton v-if="!paymentMethod" @buttonClick="addPaymentMethod" text="Aggiungi metodo di pagamento" color="trento-blue" textColor="trento-white" class="mt-2 small-button" />
         </div>
         <div class="form-group">
             <label for="theme">Tema:</label>
@@ -154,17 +193,6 @@ const toggleTheme = () => {
                 <!-- <SunIcon v-if="theme === 'Chiaro'" class="h-5 w-5 text-yellow-500 transition duration-300 ease-in-out" />
                 <MoonIcon v-else class="h-5 w-5 text-gray-500 transition duration-300 ease-in-out" /> -->
             </button>
-        </div>  
-        <div class="form-group">
-            <label for="search-warning">Avviso viaggi con valutazione bassa: </label>
-            <input type="checkbox" id="sw" class="mr-2" />
-        </div>
-        <div class="form-group">
-            <label for="favorite-places">Luoghi Preferiti:</label>
-            <p v-if="favoritePlaces.length === 0" class="text-gray-500">Nessuna preferenza trovata</p>
-            <ul v-else>
-                <li v-for="place in favoritePlaces" :key="place">{{ place }}</li>
-            </ul>
         </div>
     </div>
 </template>
