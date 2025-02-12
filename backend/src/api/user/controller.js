@@ -38,7 +38,7 @@ export const updatePassword = async (req, res) => {
 
   await user.save()
 
-  res.status(200)
+  res.status(200).send()
 }
 
 export const addFavouritePlace = async (req, res) => {
